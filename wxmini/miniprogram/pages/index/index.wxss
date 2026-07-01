@@ -24,16 +24,17 @@
   align-items: flex-end;
   margin-bottom: 24rpx;
   animation: msgIn 0.3s var(--ease-out);
+  width: 100%;
 }
 @keyframes msgIn {
   from { opacity: 0; transform: translateY(12rpx); }
   to   { opacity: 1; transform: translateY(0); }
 }
 .msg-bubble.ai {
-  flex-direction: row;
+  justify-content: flex-start;
 }
 .msg-bubble.user {
-  flex-direction: row-reverse;
+  justify-content: flex-end;
 }
 
 .bubble-avatar {
@@ -57,7 +58,8 @@
 
 /* ===== 气泡卡片 ===== */
 .bubble-card {
-  max-width: 440rpx;
+  flex-shrink: 1;
+  max-width: 420rpx;
   border-radius: var(--radius-lg);
   padding: 24rpx 28rpx;
 }
