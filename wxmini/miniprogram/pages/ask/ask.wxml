@@ -3,7 +3,7 @@
   <!-- 已选场景标签 -->
   <view class="scene-tag">
     <text class="scene-tag-label">{{categoryName}}</text>
-    <text class="scene-tag-arrow">›</text>
+    <text class="scene-tag-arrow">→</text>
     <text class="scene-tag-scene">{{sceneName}}</text>
   </view>
 
@@ -17,7 +17,7 @@
     <view class="child-bar-info" wx:else>
       <text class="child-bar-hint">点击添加孩子档案，让建议更贴合 →</text>
     </view>
-    <text class="child-bar-arrow">›</text>
+    <text class="child-bar-arrow">→</text>
   </view>
 
   <!-- 提示文字 -->
@@ -32,14 +32,14 @@
     placeholder="{{placeholder}}"
     placeholder-style="color:#C4A18A; font-size:28rpx;"
     auto-height
-    maxlength="1000"
+    maxlength="500"
     focus="{{true}}"
     bindinput="onInput"
     adjust-position="{{true}}"
   />
 
   <!-- 剩余字数 -->
-  <view class="char-count">{{userInput.length}}/1000</view>
+  <view class="char-count">{{userInput.length}}/500</view>
 
   <!-- 提交按钮 -->
   <button

@@ -13,7 +13,7 @@
       <text class="child-entry-text" wx:if="{{selectedChild}}">当前：{{selectedChild.name}}（{{selectedChild.age}}岁）</text>
       <text class="child-entry-text" wx:else>点击添加孩子档案，让建议更贴合</text>
     </view>
-    <text class="child-entry-arrow">›</text>
+    <text class="child-entry-arrow">→</text>
   </view>
 
   <!-- 语音输入提示 -->
@@ -39,7 +39,7 @@
           <view class="scene-name">{{scene.name}}</view>
           <view class="scene-hint">{{scene.hint}}</view>
         </view>
-        <text class="scene-go">›</text>
+        <text class="scene-go">→</text>
       </view>
     </view>
   </view>
