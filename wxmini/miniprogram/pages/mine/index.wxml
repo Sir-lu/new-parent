@@ -1,0 +1,39 @@
+<view class="container">
+
+  <view class="header">
+    <view class="header-title">👨‍👩‍👧‍👦 宝贝档案</view>
+    <view class="header-sub">完善档案后，AI 给出的建议会更贴合孩子</view>
+  </view>
+
+  <view wx:if="{{!loading && children.length === 0}}" class="empty">
+    <text class="empty-icon">📋</text>
+    <text class="empty-text">还没有添加孩子</text>
+  </view>
+
+  <view wx:if="{{loading}}" class="loading">加载中…</view>
+
+  <view wx:for="{{children}}" wx:key="_id"
+        class="child-card {{selectedId === item._id ? 'selected' : ''}}">
+    <view class="child-select-area" data-id="{{item._id}}" bindtap="selectChild">
+      <view class="child-avatar">{{item.gender === 'boy' ? '👦' : '👧'}}</view>
+      <view class="child-info">
+        <view class="child-name">
+          {{item.name}}
+          <text class="child-age" wx:if="{{item.age !== null}}">{{item.age}}岁</text>
+          <text class="child-stage" wx:if="{{item.stage}}">{{item.stage}}</text>
+        </view>
+        <view class="child-detail" wx:if="{{item.personalityLabels && item.personalityLabels.length > 0}}">
+          {{item.personalityLabels.join("、")}}
+        </view>
+        <view class="child-select-hint">{{selectedId === item._id ? '✅ 当前使用' : '点击设为当前'}}</view>
+      </view>
+    </view>
+    <view class="child-actions">
+      <view class="action-btn edit" data-id="{{item._id}}" bindtap="editChild">✏️</view>
+      <view class="action-btn delete" data-id="{{item._id}}" data-name="{{item.name}}" bindtap="deleteChild">🗑️</view>
+    </view>
+  </view>
+
+  <button class="add-btn" bindtap="addChild">＋ 添加宝贝</button>
+
+</view>

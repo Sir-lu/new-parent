@@ -1,6 +1,7 @@
 {
   "pages": [
     "pages/index/index",
+    "pages/mine/index",
     "pages/ask/ask",
     "pages/answer/answer",
     "pages/profile/list",
@@ -12,6 +13,26 @@
     "navigationBarBackgroundColor": "#F4F7FA",
     "navigationBarTitleText": "新父母急救箱",
     "navigationBarTextStyle": "black"
+  },
+  "tabBar": {
+    "color": "#8FABBD",
+    "selectedColor": "#5B8BA0",
+    "backgroundColor": "#FCFDFE",
+    "borderStyle": "white",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "首页",
+        "iconPath": "images/tab/home.png",
+        "selectedIconPath": "images/tab/home-active.png"
+      },
+      {
+        "pagePath": "pages/mine/index",
+        "text": "我的",
+        "iconPath": "images/tab/mine.png",
+        "selectedIconPath": "images/tab/mine-active.png"
+      }
+    ]
   },
   "sitemapLocation": "sitemap.json",
   "style": "v2",

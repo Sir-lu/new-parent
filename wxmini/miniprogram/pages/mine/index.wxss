@@ -1,0 +1,36 @@
+page { background: var(--bg-primary); font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif; }
+.container { padding: 24rpx 32rpx 80rpx; }
+
+.header { text-align: center; padding: 40rpx 16rpx 28rpx; }
+.header-title { font-size: 36rpx; font-weight: 800; color: var(--text-primary); display: block; }
+.header-sub { font-size: 26rpx; color: var(--text-secondary); margin-top: 10rpx; line-height: 1.5; display: block; }
+
+.empty { text-align: center; padding: 80rpx 40rpx; }
+.empty-icon { font-size: 80rpx; display: block; }
+.empty-text { font-size: 28rpx; color: var(--text-secondary); margin-top: 20rpx; }
+
+.loading { text-align: center; padding: 60rpx; color: var(--text-muted); }
+
+.child-card {
+  background: var(--bg-card); border-radius: var(--radius-xl); padding: 28rpx;
+  margin-bottom: 16rpx; display: flex; align-items: center;
+  box-shadow: var(--shadow-card); border: 2rpx solid transparent; transition: all 0.2s;
+}
+.child-card.selected { border-color: var(--color-primary); background: linear-gradient(135deg, var(--bg-card) 0%, var(--color-primary-ghost) 100%); }
+
+.child-select-area { flex: 1; display: flex; align-items: center; gap: 20rpx; }
+.child-avatar { width: 80rpx; height: 80rpx; background: linear-gradient(135deg, var(--color-primary-ghost) 0%, var(--color-primary-light) 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 44rpx; flex-shrink: 0; }
+.child-info { flex: 1; }
+.child-name { font-size: 30rpx; font-weight: 700; color: var(--text-primary); }
+.child-age { font-size: 24rpx; color: var(--color-primary-dark); margin-left: 12rpx; font-weight: 600; }
+.child-stage { font-size: 20rpx; color: var(--color-primary); margin-left: 8rpx; background: var(--color-primary-ghost); padding: 2rpx 12rpx; border-radius: var(--radius-sm); }
+.child-detail { font-size: 24rpx; color: var(--text-secondary); margin-top: 6rpx; }
+.child-select-hint { font-size: 22rpx; color: var(--text-muted); margin-top: 4rpx; }
+
+.child-actions { display: flex; gap: 8rpx; flex-shrink: 0; margin-left: 12rpx; }
+.action-btn { width: 56rpx; height: 56rpx; display: flex; align-items: center; justify-content: center; border-radius: var(--radius-md); font-size: 26rpx; }
+.action-btn.edit { background: var(--bg-soft); }
+.action-btn.delete { background: var(--color-primary-ghost); }
+
+.add-btn { width: 100%; height: 100rpx; background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%); color: #FFFFFF; font-size: 30rpx; font-weight: 700; border-radius: var(--radius-xl); box-shadow: var(--shadow-button); display: flex; align-items: center; justify-content: center; gap: 8rpx; margin-top: 12rpx; border: none; }
+.add-btn::after { border: none; }
