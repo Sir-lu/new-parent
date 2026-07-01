@@ -24,7 +24,7 @@ function detectCrisis(text) {
 function callDeepSeek(systemPrompt, userMessage) {
   return new Promise((resolve, reject) => {
     const postData = JSON.stringify({
-      model: "deepseek-chat",
+      model: "deepseek-chat",     // DeepSeek V3/V4 标准模型
       messages: [
         { role: "system", content: systemPrompt },
         { role: "user", content: userMessage }
@@ -279,7 +279,7 @@ exports.main = async (event, context) => {
       // 不调用 LLM，只测网络和 API Key
       return new Promise((resolve) => {
         const postData = JSON.stringify({
-          model: "deepseek-chat",
+          model: "deepseek-chat",     // DeepSeek V3/V4 标准模型
           messages: [{ role: "user", content: "回复OK" }],
           max_tokens: 5
         });
