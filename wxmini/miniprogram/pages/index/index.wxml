@@ -129,9 +129,9 @@
              confirm-type="send"
              bindinput="onInput"
              bindconfirm="sendMessage"/>
-      <button class="send-btn {{inputText ? 'ready' : ''}}" bindtap="sendMessage">
-        <text>↑</text>
-      </button>
+      <view class="send-btn {{inputText ? 'ready' : ''}}" bindtap="sendMessage">
+        <text class="send-icon">↑</text>
+      </view>
     </view>
   </view>
 </view>
