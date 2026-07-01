@@ -13,6 +13,14 @@
     </view>
   </view>
 
+  <!-- 沟通话术 — 紧跟在根源分析后面 -->
+  <view class="section" wx:if="{{answer.script}}">
+    <view class="section-title">🗣️ 可以这样对孩子说</view>
+    <view class="script-card">
+      <text class="script-text">{{answer.script}}</text>
+    </view>
+  </view>
+
   <!-- 一句话本质 -->
   <view class="insight-card" wx:if="{{answer.keyInsight}}">
     <text class="insight-label">💡 一句话本质</text>
@@ -28,14 +36,6 @@
         <text class="step-action">{{item.action}}</text>
         <text class="step-principle">📖 {{item.principle}}</text>
       </view>
-    </view>
-  </view>
-
-  <!-- 沟通话术 -->
-  <view class="section" wx:if="{{answer.script}}">
-    <view class="section-title">🗣️ 可以这样对孩子说</view>
-    <view class="script-card">
-      <text class="script-text">{{answer.script}}</text>
     </view>
   </view>
 
