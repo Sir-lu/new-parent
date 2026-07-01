@@ -43,7 +43,7 @@ function callDeepSeek(systemPrompt, userMessage) {
         "Authorization": `Bearer ${DEEPSEEK_API_KEY}`,
         "Content-Length": Buffer.byteLength(postData)
       },
-      timeout: 25000
+      timeout: 15000       // 内部超时 15s，留余量给云函数 60s 上限
     }, (res) => {
       let body = "";
       res.on("data", chunk => body += chunk);
@@ -53,6 +53,8 @@ function callDeepSeek(systemPrompt, userMessage) {
           if (result.choices && result.choices[0]) {
             const content = result.choices[0].message.content;
             resolve(JSON.parse(content));
+          } else if (result.error) {
+            reject(new Error("DeepSeek API 错误: " + result.error.message));
           } else {
             reject(new Error("DeepSeek 返回格式异常: " + body.slice(0, 200)));
           }
@@ -62,8 +64,13 @@ function callDeepSeek(systemPrompt, userMessage) {
       });
     });
 
-    req.on("error", (e) => reject(new Error("DeepSeek API 请求失败: " + e.message)));
-    req.on("timeout", () => { req.destroy(); reject(new Error("DeepSeek API 超时")); });
+    // 连接超时单独处理
+    req.on("socket", (socket) => {
+      socket.setTimeout(10000);
+      socket.on("timeout", () => { req.destroy(); reject(new Error("连接 DeepSeek 超时")); });
+    });
+    req.on("error", (e) => reject(new Error("DeepSeek 网络错误: " + e.message)));
+    req.on("timeout", () => { req.destroy(); reject(new Error("DeepSeek API 响应超时")); });
     req.write(postData);
     req.end();
   });
