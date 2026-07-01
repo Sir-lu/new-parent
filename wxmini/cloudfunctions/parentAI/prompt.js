@@ -83,13 +83,6 @@ const SYSTEM_PROMPT = `# 角色：帆书新父母家庭教育顾问
 
 /**
  * 构建发送给 LLM 的完整 prompt
- * @param {string} scene - 场景卡片名称，如 "不想上学"
- * @param {string} category - 场景分类，如 "上学问题"
- * @param {string} userInput - 家长的文字/语音输入
- * @returns {{ system: string, user: string }}
- */
-/**
- * 构建发送给 LLM 的完整 prompt
  * @param {string} scene - 场景卡片名称
  * @param {string} category - 场景分类
  * @param {string} userInput - 家长输入
