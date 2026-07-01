@@ -121,12 +121,13 @@
 
     <!-- 输入框 -->
     <view class="input-row">
-      <input class="chat-input"
+      <textarea class="chat-input"
              value="{{inputText}}"
              placeholder="说说刚才发生了什么…"
              placeholder-style="color:#B0C4CF; font-size:28rpx;"
              maxlength="1000"
-             confirm-type="send"
+             auto-height
+             show-confirm-bar="{{false}}"
              bindinput="onInput"
              bindconfirm="sendMessage"/>
       <view class="send-btn {{inputText ? 'ready' : ''}}" bindtap="sendMessage">
