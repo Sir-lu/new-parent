@@ -1,10 +1,10 @@
 /*
  * 新父母急救箱 — 全局设计系统
  * 美学方向：「温暖毛毯」— 柔和、治愈、被拥抱
- * 不是工具，不是诊所。是家长崩溃时打开的第一道光。
+ * 融入 Apple HIG 标准：44pt 触控目标、8pt 网格、弹性动效
  */
 
-/* ===== 设计令牌 (Design Tokens) ===== */
+/* ===== 设计令牌 ===== */
 page {
   /* 底色：暖奶油渐变 */
   --bg-primary: #FEF9F3;
@@ -28,29 +28,75 @@ page {
   --color-lavender: #B8A9C9;
   --color-honey: #E8C87A;
 
-  /* 圆角系统 */
-  --radius-sm: 12rpx;
-  --radius-md: 20rpx;
-  --radius-lg: 28rpx;
-  --radius-xl: 36rpx;
+  /* 圆角系统 — Apple 同心设计 */
+  --radius-sm: 8rpx;
+  --radius-md: 16rpx;
+  --radius-lg: 24rpx;
+  --radius-xl: 32rpx;
+  --radius-full: 9999rpx;
 
-  /* 阴影系统 — 柔和、像纸的投影 */
-  --shadow-card: 0 4rpx 24rpx rgba(60, 42, 36, 0.04);
-  --shadow-raised: 0 8rpx 40rpx rgba(60, 42, 36, 0.06);
-  --shadow-button: 0 6rpx 20rpx rgba(212, 132, 106, 0.25);
+  /* 阴影系统 — 分层深度 */
+  --shadow-card: 0 1rpx 6rpx rgba(60, 42, 36, 0.03), 0 2rpx 8rpx rgba(60, 42, 36, 0.04);
+  --shadow-raised: 0 4rpx 12rpx rgba(60, 42, 36, 0.04), 0 4rpx 8rpx rgba(60, 42, 36, 0.06);
+  --shadow-button: 0 4rpx 12rpx rgba(212, 132, 106, 0.2), 0 2rpx 6rpx rgba(212, 132, 106, 0.12);
+  --shadow-focus: 0 0 0 6rpx rgba(212, 132, 106, 0.15);
+
+  /* 触控目标 — Apple HIG 最小 44pt = 88rpx */
+  --touch-min: 88rpx;
+  --touch-comfortable: 96rpx;
+
+  /* 动效 — Apple 弹性缓动 */
+  --ease-out: cubic-bezier(0, 0, 0.58, 1);
+  --ease-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  --duration-fast: 0.15s;
+  --duration-normal: 0.25s;
+  --duration-slow: 0.35s;
+
+  /* 间距 — 基于 8pt 网格 */
+  --space-xs: 8rpx;
+  --space-sm: 16rpx;
+  --space-md: 24rpx;
+  --space-lg: 32rpx;
+  --space-xl: 40rpx;
+  --space-2xl: 48rpx;
 
   background: var(--bg-primary);
-  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "PingFang SC", "Helvetica Neue", sans-serif;
   color: var(--text-primary);
   -webkit-font-smoothing: antialiased;
 }
 
+/* ===== 基础重置 ===== */
 button {
   background: initial;
   padding: 0;
   margin: 0;
   line-height: inherit;
+  /* Apple HIG: 最小触控区域 */
+  min-height: var(--touch-min);
+  min-width: var(--touch-min);
 }
 button:focus { outline: 0; }
 button::after { border: none; }
 button[loading] { opacity: 0.75; }
+
+/* Apple 标准：可点元素最小触控区域 */
+.tappable {
+  min-height: var(--touch-min);
+  min-width: var(--touch-min);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 弹性交互：轻按缩放反馈 */
+.tappable:active,
+button:active:not([disabled]),
+.category-card:active,
+.scene-item:active,
+.step-card:active,
+.personality-card:active {
+  transform: scale(0.97);
+  transition: transform var(--duration-fast) var(--ease-spring);
+}
+
