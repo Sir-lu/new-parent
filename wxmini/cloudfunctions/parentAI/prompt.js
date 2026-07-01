@@ -88,12 +88,24 @@ const SYSTEM_PROMPT = `# 角色：帆书新父母家庭教育顾问
  * @param {string} userInput - 家长的文字/语音输入
  * @returns {{ system: string, user: string }}
  */
-function buildPrompt(scene, category, userInput) {
-  const userMessage = `【场景分类】${category}
+/**
+ * 构建发送给 LLM 的完整 prompt
+ * @param {string} scene - 场景卡片名称
+ * @param {string} category - 场景分类
+ * @param {string} userInput - 家长输入
+ * @param {string} childContext - 孩子档案上下文（可选）
+ */
+function buildPrompt(scene, category, userInput, childContext) {
+  let userMessage = `【场景分类】${category}
 【具体场景】${scene}
-【家长描述】${userInput}
+【家长描述】${userInput}`;
 
-请分析这个亲子冲突场景，给出结构化的解决方案。`;
+  // 注入孩子档案上下文（如果已填写）
+  if (childContext) {
+    userMessage += `\n\n${childContext}`;
+  }
+
+  userMessage += `\n\n请分析这个亲子冲突场景，给出结构化的解决方案。如果提供了孩子档案，请根据孩子的年龄、性格特征和出生顺序来调整你的建议——不同年龄阶段对应不同的教育工具，不同性格适合不同的沟通方式。`;
 
   return {
     system: SYSTEM_PROMPT,

@@ -1,0 +1,92 @@
+<view class="container">
+
+  <!-- 1. 基本信息 -->
+  <view class="section">
+    <view class="section-title">📝 基本信息</view>
+
+    <view class="form-group">
+      <text class="label">昵称 <text class="required">*</text></text>
+      <input class="input" placeholder="如：淇淇、大宝" value="{{name}}" bindinput="onNameInput" maxlength="10"/>
+    </view>
+
+    <view class="form-group">
+      <text class="label">性别 <text class="required">*</text></text>
+      <view class="option-row">
+        <view wx:for="{{genderOptions}}" wx:key="value"
+              class="option-chip {{gender === item.value ? 'active' : ''}}"
+              data-value="{{item.value}}" bindtap="selectGender">
+          {{item.label}}
+        </view>
+      </view>
+    </view>
+
+    <view class="form-group">
+      <text class="label">出生年份 <text class="required">*</text></text>
+      <view class="birth-row">
+        <input class="input birth-input" type="number" placeholder="如 2020" value="{{birthYear}}" bindinput="onBirthYearInput" maxlength="4"/>
+        <text wx:if="{{computedAge !== null}}" class="age-preview">≈ {{computedAge}} 岁</text>
+      </view>
+    </view>
+
+    <view class="form-group">
+      <text class="label">年级</text>
+      <view class="option-grid">
+        <view wx:for="{{gradeOptions}}" wx:key="value"
+              class="option-chip {{grade === item.value ? 'active' : ''}}"
+              data-value="{{item.value}}" bindtap="selectGrade">
+          {{item.label}}
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 2. 性格特征 -->
+  <view class="section">
+    <view class="section-title">🎭 性格特征（可多选）</view>
+    <view class="section-hint">选得越准，AI 给出的沟通方式越贴合孩子</view>
+
+    <view wx:for="{{personalityOptions}}" wx:key="value"
+          class="personality-card {{personality.indexOf(item.value) >= 0 ? 'active' : ''}}"
+          data-value="{{item.value}}" bindtap="togglePersonality">
+      <view class="personality-check">
+        {{personality.indexOf(item.value) >= 0 ? '☑' : '☐'}}
+      </view>
+      <view class="personality-body">
+        <text class="personality-label">{{item.label}}</text>
+        <text class="personality-desc">{{item.desc}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 3. 出生顺序 -->
+  <view class="section">
+    <view class="section-title">👶 出生顺序</view>
+    <view class="option-row">
+      <view wx:for="{{birthOrderOptions}}" wx:key="value"
+            class="option-chip {{birthOrder === item.value ? 'active' : ''}}"
+            data-value="{{item.value}}" bindtap="selectBirthOrder">
+        {{item.label}}
+      </view>
+    </view>
+  </view>
+
+  <!-- 4. 特别关注 -->
+  <view class="section">
+    <view class="section-title">📌 特别关注（选填）</view>
+    <textarea class="textarea" placeholder="如：对声音特别敏感、害怕黑暗、不喜欢被催促、有过敏史…" value="{{notes}}" bindinput="onNotesInput" maxlength="200" auto-height/>
+    <view class="char-count">{{notes.length}}/200</view>
+  </view>
+
+  <!-- 提交 -->
+  <button class="submit-btn {{submitting ? 'disabled' : ''}}" bindtap="submit" disabled="{{submitting}}" loading="{{submitting}}">
+    {{submitting ? '保存中…' : (isEdit ? '💾 更新档案' : '➕ 添加孩子')}}
+  </button>
+
+  <!-- 预览 -->
+  <view wx:if="{{name && computedAge !== null}}" class="preview-card">
+    <text class="preview-title">📋 档案预览</text>
+    <text class="preview-line">{{gender === 'boy' ? '👦' : '👧'}} {{name}}，{{computedAge}}岁</text>
+    <text wx:if="{{personalityDisplay}}" class="preview-line">性格：{{personalityDisplay}}</text>
+  </view>
+
+</view>

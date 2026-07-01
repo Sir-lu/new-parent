@@ -16,6 +16,27 @@ page {
 .scene-tag-arrow { font-size: 24rpx; color: #C4A18A; }
 .scene-tag-scene { font-size: 28rpx; font-weight: 600; color: #3D2010; }
 
+/* 孩子选择器 */
+.child-bar {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  background: #FFFFFF;
+  border-radius: 16rpx;
+  padding: 20rpx 24rpx;
+  margin-bottom: 20rpx;
+  box-shadow: 0 2rpx 12rpx rgba(141, 100, 74, 0.05);
+  border: 2rpx solid transparent;
+  transition: border 0.2s;
+}
+.child-bar:active { border-color: #FFD5C0; }
+.child-bar-icon { font-size: 44rpx; flex-shrink: 0; }
+.child-bar-info { flex: 1; }
+.child-bar-name { font-size: 26rpx; font-weight: 600; color: #2D1810; display: block; }
+.child-bar-tags { font-size: 22rpx; color: #B09A8A; margin-top: 2rpx; display: block; }
+.child-bar-hint { font-size: 24rpx; color: #C4A18A; }
+.child-bar-arrow { font-size: 24rpx; color: #C4A18A; flex-shrink: 0; }
+
 /* 提示 */
 .prompt { margin-bottom: 20rpx; }
 .prompt-text { font-size: 26rpx; color: #8C6E5A; line-height: 1.5; }

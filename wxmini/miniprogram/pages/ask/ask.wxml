@@ -7,6 +7,19 @@
     <text class="scene-tag-scene">{{sceneName}}</text>
   </view>
 
+  <!-- 孩子选择器 -->
+  <view class="child-bar" bindtap="toProfileList">
+    <text class="child-bar-icon">{{selectedChild ? (selectedChild.gender === 'boy' ? '👦' : '👧') : '👤'}}</text>
+    <view class="child-bar-info" wx:if="{{selectedChild}}">
+      <text class="child-bar-name">{{selectedChild.name}}（{{selectedChild.age}}岁）</text>
+      <text class="child-bar-tags" wx:if="{{selectedChild.personalityDisplay}}">{{selectedChild.personalityDisplay}}</text>
+    </view>
+    <view class="child-bar-info" wx:else>
+      <text class="child-bar-hint">点击添加孩子档案，让建议更贴合 →</text>
+    </view>
+    <text class="child-bar-arrow">›</text>
+  </view>
+
   <!-- 提示文字 -->
   <view class="prompt">
     <text class="prompt-text">用语音或文字说说刚才发生了什么，越具体越好。</text>
