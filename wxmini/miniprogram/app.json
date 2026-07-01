@@ -7,9 +7,9 @@
     "pages/profile/edit"
   ],
   "window": {
-    "backgroundColor": "#FFF8F5",
+    "backgroundColor": "#F4F7FA",
     "backgroundTextStyle": "light",
-    "navigationBarBackgroundColor": "#FFF8F5",
+    "navigationBarBackgroundColor": "#F4F7FA",
     "navigationBarTitleText": "新父母急救箱",
     "navigationBarTextStyle": "black"
   },
