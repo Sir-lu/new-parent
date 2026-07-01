@@ -21,6 +21,52 @@ function detectCrisis(text) {
   return CRISIS_KEYWORDS.some(kw => text.includes(kw));
 }
 
+// 判断是否为「数据库集合不存在」错误（首次使用云环境时集合尚未创建）
+function isCollectionNotExistError(err) {
+  if (!err) return false;
+  const msg = String(err.message || err.errMsg || err.msg || "");
+  const code = err.errCode ?? err.code;
+  return code === -502005 || /collection not exist/i.test(msg) || /ResourceNotFound/i.test(msg) || /Db or Table not exist/i.test(msg);
+}
+
+const REQUIRED_COLLECTIONS = ["children", "questions", "feedback", "users"];
+
+// 校验微信 openid（未登录时拒绝写入/读取用户数据）
+function requireOpenId(openid) {
+  if (!openid) {
+    return { success: false, error: "请先登录", needLogin: true };
+  }
+  return null;
+}
+
+// 确保集合存在（已存在则忽略）
+async function ensureCollection(collectionName) {
+  try {
+    await db.createCollection(collectionName);
+  } catch (err) {
+    const msg = String(err.message || err.errMsg || "");
+    if (/already exist|ResourceExist|Table exist|已存在|exist/i.test(msg)) return;
+    try {
+      await db.collection(collectionName).limit(1).get();
+    } catch (getErr) {
+      if (isCollectionNotExistError(getErr)) throw err;
+    }
+  }
+}
+
+// 写入集合，若集合不存在则自动创建后重试一次
+async function addWithAutoCreate(collectionName, doc) {
+  try {
+    return await db.collection(collectionName).add({ data: doc });
+  } catch (err) {
+    if (isCollectionNotExistError(err)) {
+      await ensureCollection(collectionName);
+      return await db.collection(collectionName).add({ data: doc });
+    }
+    throw err;
+  }
+}
+
 /**
  * 递归遍历并清除对象所有字符串字段中的 emoji 和特殊 Unicode 字符
  * 微信小程序文字渲染引擎对 emoji、特殊符号（⏸�）等显示为乱码
@@ -121,8 +167,33 @@ exports.main = async (event, context) => {
 
   switch (type) {
 
+    // ── 微信登录 ────────────────────────────────
+    case "login": {
+      const authErr = requireOpenId(openid);
+      if (authErr) return authErr;
+      try {
+        await ensureCollection("users");
+        const { data } = await db.collection("users").where({ openid }).limit(1).get();
+        const now = db.serverDate();
+        if (data.length === 0) {
+          const result = await db.collection("users").add({
+            data: { openid, createdAt: now, lastLoginAt: now }
+          });
+          return { success: true, data: { openid, userId: result._id } };
+        }
+        await db.collection("users").doc(data[0]._id).update({
+          data: { lastLoginAt: now }
+        });
+        return { success: true, data: { openid, userId: data[0]._id } };
+      } catch (err) {
+        return { success: false, error: err.message || err.errMsg };
+      }
+    }
+
     // ── AI 问答 ──────────────────────────────────
     case "askAI": {
+      const authErr = requireOpenId(openid);
+      if (authErr) return authErr;
       const { scene, category, userInput, childContext } = event;
       if (!scene || !userInput) {
         return { success: false, error: "缺少 scene 或 userInput 参数" };
@@ -168,7 +239,7 @@ exports.main = async (event, context) => {
           rating: 0,
           createdAt: db.serverDate(),
         };
-        const result = await db.collection("questions").add({ data: doc });
+        const result = await addWithAutoCreate("questions", doc);
         aiResult._id = result._id;
       } catch (dbErr) {
         console.error("数据库写入失败:", dbErr.message);
@@ -180,6 +251,8 @@ exports.main = async (event, context) => {
 
     // ── 评分 ────────────────────────────────────
     case "rateAnswer": {
+      const authErr = requireOpenId(openid);
+      if (authErr) return authErr;
       const { questionId, rating } = event;
       if (!questionId || rating === undefined) {
         return { success: false, error: "缺少 questionId 或 rating 参数" };
@@ -188,9 +261,7 @@ exports.main = async (event, context) => {
         await db.collection("questions").doc(questionId).update({
           data: { rating, ratedAt: db.serverDate() }
         });
-        await db.collection("feedback").add({
-          data: { openid, questionId, rating, createdAt: db.serverDate() }
-        });
+        await addWithAutoCreate("feedback", { openid, questionId, rating, createdAt: db.serverDate() });
         return { success: true };
       } catch (err) {
         return { success: false, error: err.message };
@@ -199,6 +270,8 @@ exports.main = async (event, context) => {
 
     // ── 历史 ────────────────────────────────────
     case "getHistory": {
+      const authErr = requireOpenId(openid);
+      if (authErr) return authErr;
       try {
         const { data } = await db.collection("questions")
           .where({ openid }).orderBy("createdAt", "desc").limit(20).get();
@@ -209,18 +282,26 @@ exports.main = async (event, context) => {
     }
 
     case "getAnswer": {
+      const authErr = requireOpenId(openid);
+      if (authErr) return authErr;
       const { questionId } = event;
       if (!questionId) return { success: false, error: "缺少 questionId" };
       try {
-        const { data } = await db.collection("questions").doc(questionId).get();
-        return { success: true, data: data[0] || null };
+        const res = await db.collection("questions").doc(questionId).get();
+        const doc = res.data;
+        if (!doc || doc.openid !== openid) {
+          return { success: false, error: "记录不存在或无权访问" };
+        }
+        return { success: true, data: doc };
       } catch (err) {
-        return { success: false, error: err.message };
+        return { success: false, error: err.message || err.errMsg };
       }
     }
 
     // ── 孩子档案 CRUD ──────────────────────────
     case "addChild": {
+      const authErr = requireOpenId(openid);
+      if (authErr) return authErr;
       const { name, birthYear, gender, grade, personality, birthOrder, notes } = event;
       if (!name || !birthYear || !gender) {
         return { success: false, error: "缺少必填字段：name/birthYear/gender" };
@@ -236,7 +317,7 @@ exports.main = async (event, context) => {
           createdAt: db.serverDate(),
           updatedAt: db.serverDate()
         };
-        const result = await db.collection("children").add({ data: doc });
+        const result = await addWithAutoCreate("children", doc);
         return { success: true, childId: result._id };
       } catch (err) {
         return { success: false, error: err.message };
@@ -244,6 +325,8 @@ exports.main = async (event, context) => {
     }
 
     case "updateChild": {
+      const authErr = requireOpenId(openid);
+      if (authErr) return authErr;
       const { childId, name, birthYear, gender, grade, personality, birthOrder, notes } = event;
       if (!childId) return { success: false, error: "缺少 childId" };
       try {
@@ -264,6 +347,8 @@ exports.main = async (event, context) => {
     }
 
     case "deleteChild": {
+      const authErr = requireOpenId(openid);
+      if (authErr) return authErr;
       const { childId } = event;
       if (!childId) return { success: false, error: "缺少 childId" };
       try {
@@ -275,23 +360,38 @@ exports.main = async (event, context) => {
     }
 
     case "listChildren": {
+      const authErr = requireOpenId(openid);
+      if (authErr) return authErr;
       try {
         const { data } = await db.collection("children")
           .where({ openid }).orderBy("createdAt", "asc").get();
         return { success: true, data };
       } catch (err) {
-        return { success: false, error: err.message, data: [] };
+        if (isCollectionNotExistError(err)) {
+          await ensureCollection("children");
+          return { success: true, data: [] };
+        }
+        return { success: false, error: err.message || err.errMsg, data: [] };
       }
     }
 
     case "getChild": {
+      const authErr = requireOpenId(openid);
+      if (authErr) return authErr;
       const { childId } = event;
       if (!childId) return { success: false, error: "缺少 childId" };
       try {
-        const { data } = await db.collection("children").doc(childId).get();
-        return { success: true, data: data[0] || null };
+        const res = await db.collection("children").doc(childId).get();
+        const child = res.data;
+        if (!child || !child._id) {
+          return { success: false, error: "档案不存在" };
+        }
+        if (child.openid !== openid) {
+          return { success: false, error: "无权访问该档案" };
+        }
+        return { success: true, data: child };
       } catch (err) {
-        return { success: false, error: err.message };
+        return { success: false, error: err.message || err.errMsg };
       }
     }
 
@@ -332,6 +432,21 @@ exports.main = async (event, context) => {
         req.write(postData);
         req.end();
       });
+    }
+
+    // ── 初始化数据库集合 ────────────────────────
+    case "initDatabase": {
+      const results = [];
+      for (const name of REQUIRED_COLLECTIONS) {
+        try {
+          await ensureCollection(name);
+          results.push({ name, ok: true });
+        } catch (err) {
+          results.push({ name, ok: false, error: err.message || err.errMsg });
+        }
+      }
+      const ok = results.every(r => r.ok);
+      return { success: ok, results };
     }
 
     // ── 调试 ────────────────────────────────────

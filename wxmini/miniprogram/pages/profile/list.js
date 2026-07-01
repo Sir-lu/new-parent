@@ -1,4 +1,5 @@
 const { birthYearToAge, ageToStage, PERSONALITY_OPTIONS } = require("../../utils/childProfile.js");
+const { ensureLogin } = require("../../utils/auth.js");
 
 Page({
   data: {
@@ -8,6 +9,13 @@ Page({
   },
 
   onShow() {
+    const app = getApp();
+    if (!app.globalData.isLoggedIn) {
+      ensureLogin().catch(() => {
+        wx.navigateBack({ delta: 1 });
+      });
+      return;
+    }
     this.loadChildren();
   },
 

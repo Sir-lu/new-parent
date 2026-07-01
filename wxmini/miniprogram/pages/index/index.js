@@ -1,57 +1,51 @@
-const { SCENE_CATEGORIES } = require("../../utils/scenes.js");
-const { birthYearToAge, profileToContext, PERSONALITY_OPTIONS } = require("../../utils/childProfile.js");
-
-// 展开所有场景为扁平数组
-function flattenScenes() {
-  const result = [];
-  SCENE_CATEGORIES.forEach(cat => {
-    cat.scenes.forEach(scene => {
-      result.push({ ...scene, category: cat.name });
-    });
-  });
-  return result;
-}
+const { profileToContext } = require("../../utils/childProfile.js");
+const { ensureLogin } = require("../../utils/auth.js");
 
 Page({
   data: {
-    messages: [],          // 对话列表
-    allScenes: flattenScenes(),
-    activeScene: "",
+    messages: [],
+    children: [],
+    selectedChildId: "",
     inputText: "",
     scrollTo: "",
-    selectedChild: null,
-    sending: false
-  },
-
-  onLoad() {
-    this.setData({ allScenes: flattenScenes() });
+    sending: false,
+    isLoggedIn: false
   },
 
   onShow() {
-    this.loadChild();
-  },
-
-  loadChild() {
     const app = getApp();
-    const child = app.globalData.selectedChild;
-    if (child) {
-      const age = birthYearToAge(child.birthYear);
-      const gender = child.gender || "";
-      const icon = gender === "boy" ? "👦" : (gender === "girl" ? "👧" : "👤");
-      this.setData({ selectedChild: { ...child, age, icon }});
-    } else {
-      this.setData({ selectedChild: null });
-    }
+    this.setData({ isLoggedIn: app.globalData.isLoggedIn });
+    this.loadChildren();
   },
 
-  // 选择/取消场景
-  pickScene(e) {
-    const { scene } = e.currentTarget.dataset;
-    if (this.data.activeScene === scene.id) {
-      this.setData({ activeScene: "" });
-    } else {
-      this.setData({ activeScene: scene.id });
+  loadChildren() {
+    const app = getApp();
+    if (!app.globalData.isLoggedIn) {
+      this.setData({ children: [], selectedChildId: "" });
+      return;
     }
+    wx.cloud.callFunction({
+      name: "parentAI",
+      data: { type: "listChildren" }
+    }).then(resp => {
+      const children = (resp.result && resp.result.data) ? resp.result.data : [];
+      let selectedChildId = app.globalData.selectedChildId || "";
+      if (!children.find(c => c._id === selectedChildId)) {
+        selectedChildId = children.length > 0 ? children[0]._id : "";
+      }
+      this.setData({ children, selectedChildId });
+    }).catch(() => {
+      this.setData({ children: [], selectedChildId: "" });
+    });
+  },
+
+  // 选择本次问题针对的孩子
+  pickChild(e) {
+    const { id } = e.currentTarget.dataset;
+    const child = this.data.children.find(c => c._id === id) || null;
+    const app = getApp();
+    app.setSelectedChild(id, child);
+    this.setData({ selectedChildId: id });
   },
 
   toProfileList() {
@@ -67,9 +61,14 @@ Page({
     const text = this.data.inputText.trim();
     if (!text || this.data.sending) return;
 
+    ensureLogin().then(() => {
+      this._doSendMessage(text);
+    }).catch(() => {});
+  },
+
+  _doSendMessage(text) {
     const msgId = Date.now().toString();
-    const sceneObj = this.data.allScenes.find(s => s.id === this.data.activeScene);
-    const selectedChild = this.data.selectedChild;
+    const selectedChild = this.data.children.find(c => c._id === this.data.selectedChildId) || null;
 
     // 添加用户消息
     const userMsg = { id: msgId + "_u", role: "user", text };
@@ -79,18 +78,16 @@ Page({
     const messages = [...this.data.messages, userMsg, aiMsg];
     this.setData({ messages, inputText: "", scrollTo: "msg-bottom", sending: true });
 
-    // 构建孩子上下文
+    // 构建孩子上下文，让 AI 回复更贴合孩子的实际情况
     const childContext = selectedChild ? profileToContext(selectedChild) : "";
-    const sceneName = sceneObj ? sceneObj.name : "";
-    const categoryName = sceneObj ? sceneObj.category : "";
 
     // 调用云函数
     wx.cloud.callFunction({
       name: "parentAI",
       data: {
         type: "askAI",
-        scene: sceneName || "未指定",
-        category: categoryName || "",
+        scene: "日常沟通",
+        category: "",
         userInput: text,
         childContext
       }
@@ -107,6 +104,11 @@ Page({
           rating: 0
         };
       } else {
+        if (resp.result && resp.result.needLogin) {
+          getApp().clearLogin();
+          this.setData({ isLoggedIn: false, children: [], selectedChildId: "" });
+          ensureLogin();
+        }
         messages[idx] = {
           id: msgId + "_a",
           role: "ai",

@@ -1,7 +1,7 @@
 <view class="container">
 
   <view class="header">
-    <text class="header-title">👨‍👩‍👧‍👦 我的孩子</text>
+    <text class="header-title">👨‍👩‍👧‍👦 宝贝档案</text>
     <text class="header-sub">完善档案后，AI 给出的建议会更贴合孩子的实际情况。</text>
   </view>
 

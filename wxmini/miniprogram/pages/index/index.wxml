@@ -7,7 +7,9 @@
       <view class="bubble-card welcome">
         <text class="welcome-title">遇到什么事了？</text>
         <text class="welcome-sub">跟我说说刚才发生了什么，我来帮你分析。</text>
-        <text class="welcome-hint">可以先选下面的场景，或者直接说。</text>
+        <text class="welcome-hint" wx:if="{{!isLoggedIn}}">使用前请先到「我的」页完成微信登录，数据才会保存到您的账号。</text>
+        <text class="welcome-hint" wx:elif="{{children.length > 0}}">可以先选下面针对的孩子，再说说发生了什么。</text>
+        <text class="welcome-hint" wx:else>直接说说发生了什么就可以。</text>
       </view>
     </view>
 
@@ -108,15 +110,14 @@
 
   <!-- 底部输入区 -->
   <view class="input-bar">
-    <!-- 快捷选项行 -->
-    <view class="quick-row">
+    <!-- 孩子选择行：仅当已添加宝贝档案时展示 -->
+    <view class="quick-row" wx:if="{{children.length > 0}}">
       <scroll-view class="chip-scroll" scroll-x>
-        <!-- 场景 chips -->
-        <view wx:for="{{allScenes}}" wx:key="id"
-              class="quick-chip {{activeScene === item.id ? 'active' : ''}}"
-              data-scene="{{item}}"
-              bindtap="pickScene">
-          {{item.icon}} {{item.name}}
+        <view wx:for="{{children}}" wx:key="_id"
+              class="quick-chip child-chip {{selectedChildId === item._id ? 'active' : ''}}"
+              data-id="{{item._id}}"
+              bindtap="pickChild">
+          {{item.gender === 'boy' ? '👦' : '👧'}} {{item.name}}
         </view>
       </scroll-view>
     </view>

@@ -2,6 +2,7 @@ const {
   PERSONALITY_OPTIONS, BIRTH_ORDER_OPTIONS,
   GRADE_OPTIONS, GENDER_OPTIONS, birthYearToAge
 } = require("../../utils/childProfile.js");
+const { ensureLogin } = require("../../utils/auth.js");
 
 Page({
   data: {
@@ -27,6 +28,12 @@ Page({
   },
 
   onLoad(options) {
+    const app = getApp();
+    if (!app.globalData.isLoggedIn) {
+      ensureLogin().catch(() => wx.navigateBack());
+      return;
+    }
+
     // 初始化性格选项，每个带 checked 字段
     this.setData({
       personalityOptions: PERSONALITY_OPTIONS.map(p => ({ ...p, checked: false }))
@@ -48,7 +55,7 @@ Page({
       data: { type: "getChild", childId: id }
     }).then(resp => {
       wx.hideLoading();
-      if (resp.result && resp.result.data) {
+      if (resp.result && resp.result.success && resp.result.data) {
         const c = resp.result.data;
         const personalityArr = c.personality || [];
         this.setData({
@@ -60,6 +67,11 @@ Page({
           notes: c.notes || ""
         });
         this.syncPersonalityChecked(personalityArr);
+      } else {
+        wx.showToast({
+          title: resp.result?.error || "加载档案失败",
+          icon: "none"
+        });
       }
     }).catch(() => {
       wx.hideLoading();
@@ -127,6 +139,12 @@ Page({
 
   // ── 提交 ─────────────────────
   submit() {
+    const app = getApp();
+    if (!app.globalData.isLoggedIn) {
+      ensureLogin();
+      return;
+    }
+
     const { name, birthYear, gender, personality, isEdit, childId } = this.data;
 
     if (!name.trim()) { wx.showToast({ title: "请填写昵称", icon: "none" }); return; }
