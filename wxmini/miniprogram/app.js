@@ -10,7 +10,7 @@ App({
     wx.cloud.init({
       // env 参数：填入你的云环境 ID
       // 在微信开发者工具右上角 → 云开发按钮 → 设置 → 环境 ID 查看
-      env: "",
+      env: "cloud1-d5g9zm8d813d5e245",
       traceUser: true
     });
 

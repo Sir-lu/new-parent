@@ -1,10 +1,10 @@
 {
   "pages": [
-    "pages/profile/list",
-    "pages/profile/edit",
     "pages/index/index",
     "pages/ask/ask",
-    "pages/answer/answer"
+    "pages/answer/answer",
+    "pages/profile/list",
+    "pages/profile/edit"
   ],
   "window": {
     "backgroundColor": "#FFF8F5",

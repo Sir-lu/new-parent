@@ -6,6 +6,16 @@
     <view class="hero-sub">选一个最接近的场景，我来帮你想办法。</view>
   </view>
 
+  <!-- 孩子档案快捷入口 -->
+  <view class="child-entry" bindtap="toProfileList">
+    <view class="child-entry-left">
+      <text class="child-entry-icon">{{selectedChild ? (selectedChild.gender === 'boy' ? '👦' : '👧') : '📋'}}</text>
+      <text class="child-entry-text" wx:if="{{selectedChild}}">当前：{{selectedChild.name}}（{{selectedChild.age}}岁）</text>
+      <text class="child-entry-text" wx:else>点击添加孩子档案，让建议更贴合</text>
+    </view>
+    <text class="child-entry-arrow">›</text>
+  </view>
+
   <!-- 语音输入提示 -->
   <view class="voice-tip">
     <text class="voice-tip-icon">🎤</text>

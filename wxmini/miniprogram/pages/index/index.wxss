@@ -34,11 +34,28 @@ page {
   background: linear-gradient(135deg, #FFF0E8, #FFE4D6);
   border-radius: 16rpx;
   padding: 20rpx 28rpx;
-  margin-bottom: 32rpx;
+  margin-bottom: 20rpx;
   gap: 8rpx;
 }
 .voice-tip-icon { font-size: 32rpx; }
 .voice-tip-text { font-size: 24rpx; color: #B85C3A; }
+
+/* 孩子档案入口 */
+.child-entry {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #FFFFFF;
+  border-radius: 16rpx;
+  padding: 20rpx 28rpx;
+  margin-bottom: 20rpx;
+  box-shadow: 0 2rpx 12rpx rgba(141, 100, 74, 0.05);
+  border: 2rpx dashed #FFD5C0;
+}
+.child-entry-left { display: flex; align-items: center; gap: 14rpx; }
+.child-entry-icon { font-size: 36rpx; }
+.child-entry-text { font-size: 26rpx; color: #8C6E5A; }
+.child-entry-arrow { font-size: 24rpx; color: #C4A18A; }
 
 /* 分类卡片 */
 .category-card {
