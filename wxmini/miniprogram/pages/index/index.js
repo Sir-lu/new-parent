@@ -24,7 +24,6 @@ Page({
   },
 
   onLoad() {
-    wx.setNavigationBarTitle({ title: "新父母急救箱" });
     this.setData({ allScenes: flattenScenes() });
   },
 

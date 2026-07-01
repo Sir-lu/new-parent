@@ -1,4 +1,13 @@
 <view class="chat-page">
+  <!-- 顶部栏：孩子档案入口 -->
+  <view class="top-bar">
+    <view class="top-bar-title">新父母急救箱</view>
+    <view class="top-bar-child" bindtap="toProfileList">
+      <text class="top-bar-child-icon">{{selectedChild ? '👤' : '＋'}}</text>
+      <text class="top-bar-child-text">{{selectedChild ? selectedChild.name : '添加孩子'}}</text>
+    </view>
+  </view>
+
   <!-- 消息滚动区 -->
   <scroll-view class="msg-list" scroll-y scroll-into-view="{{scrollTo}}" scroll-with-animation>
     <!-- 欢迎消息 -->
@@ -119,10 +128,6 @@
           {{item.icon}} {{item.name}}
         </view>
       </scroll-view>
-      <!-- 孩子 chip -->
-      <view class="quick-chip child {{selectedChild ? 'has-child' : ''}}" bindtap="toProfileList">
-        {{selectedChild ? selectedChild.icon + ' ' + selectedChild.name : '👤 添加孩子'}}
-      </view>
     </view>
 
     <!-- 输入框 -->
