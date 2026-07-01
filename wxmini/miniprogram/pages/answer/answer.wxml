@@ -1,11 +1,23 @@
 <view wx:if="{{answer}}" class="container">
 
-  <!-- 情绪共情 -->
-  <view class="empathy-card">
+  <!-- ★ 先冷静 — 最重要的部分，放在最上面，视觉突出 -->
+  <view wx:if="{{answer.coolDown}}" class="cooldown-card">
+    <view class="cooldown-header">
+      <text class="cooldown-icon">🧊</text>
+      <text class="cooldown-title">先做这件事（30 秒）</text>
+    </view>
+    <text class="cooldown-text">{{answer.coolDown}}</text>
+    <view class="cooldown-footer">
+      <text class="cooldown-hint">人在不冷静的时候是无法思考的。做完上面的动作，再看下面的分析。</text>
+    </view>
+  </view>
+
+  <!-- 情绪共情 — 冷静之后，让他感到被理解 -->
+  <view class="empathy-card" wx:if="{{answer.emotionalCheck}}">
     <text class="empathy-text">{{answer.emotionalCheck}}</text>
   </view>
 
-  <!-- 核心诊断 -->
+  <!-- 根源分析 -->
   <view class="section">
     <view class="section-title">🔍 根源分析</view>
     <view class="section-card">
@@ -13,7 +25,7 @@
     </view>
   </view>
 
-  <!-- 沟通话术 — 紧跟在根源分析后面 -->
+  <!-- 沟通话术 -->
   <view class="section" wx:if="{{answer.script}}">
     <view class="section-title">🗣️ 可以这样对孩子说</view>
     <view class="script-card">
@@ -47,7 +59,7 @@
     </view>
   </view>
 
-  <!-- 评分区域 -->
+  <!-- 评分 -->
   <view class="section rating-section">
     <view class="section-title">这个建议有帮助吗？</view>
     <view class="stars-row">

@@ -1,32 +1,37 @@
 /*
  * 新父母急救箱 — 全局设计系统
- * 美学方向：「温暖毛毯」— 柔和、治愈、被拥抱
+ * 美学方向：「冷静薄荷」— 降温、平复、呼吸空间
+ *
+ * 设计原则：家长打开这个页面时，大概率是生气的、着急的、崩溃的。
+ * 颜色必须帮他们降温——蓝色降低心率，冷绿平复焦虑，大量留白创造呼吸感。
+ * 这不是温暖的拥抱，这是让人深呼吸的湖边石阶。
+ *
  * 融入 Apple HIG 标准：44pt 触控目标、8pt 网格、弹性动效
  */
 
 /* ===== 设计令牌 ===== */
 page {
-  /* 底色：暖奶油渐变 */
-  --bg-primary: #FEF9F3;
-  --bg-warm: #FEF5ED;
-  --bg-card: #FFFCF9;
-  --bg-soft: #FCF6F0;
+  /* 底色：冷雾白 → 湖冰灰 */
+  --bg-primary: #F4F7FA;
+  --bg-warm: #F0F4F8;
+  --bg-card: #FCFDFE;
+  --bg-soft: #F0F3F6;
 
-  /* 主色：温柔陶土 */
-  --color-primary: #D4846A;
-  --color-primary-dark: #C07058;
-  --color-primary-light: #F8E0D5;
-  --color-primary-ghost: #FDF2EC;
+  /* 主色：沉静湖蓝 — 降低心率、平复情绪 */
+  --color-primary: #5B8BA0;
+  --color-primary-dark: #4A7A8E;
+  --color-primary-light: #CDE3EC;
+  --color-primary-ghost: #EBF3F7;
 
-  /* 文字：深暖棕 */
-  --text-primary: #3C2A24;
-  --text-secondary: #8B6E5E;
-  --text-muted: #B8A395;
+  /* 文字：石墨蓝灰 */
+  --text-primary: #263A4A;
+  --text-secondary: #5A7A8E;
+  --text-muted: #8FABBD;
 
   /* 辅助色 */
-  --color-sage: #8B9D83;
-  --color-lavender: #B8A9C9;
-  --color-honey: #E8C87A;
+  --color-sage: #7BA08B;       /* 鼠尾草绿 — 自然、安心 */
+  --color-lavender: #8E94B8;   /* 冷薰衣紫 — 安抚 */
+  --color-ice: #B8D4E3;        /* 冰蓝 — 清爽 */
 
   /* 圆角系统 — Apple 同心设计 */
   --radius-sm: 8rpx;
@@ -35,11 +40,11 @@ page {
   --radius-xl: 32rpx;
   --radius-full: 9999rpx;
 
-  /* 阴影系统 — 分层深度 */
-  --shadow-card: 0 1rpx 6rpx rgba(60, 42, 36, 0.03), 0 2rpx 8rpx rgba(60, 42, 36, 0.04);
-  --shadow-raised: 0 4rpx 12rpx rgba(60, 42, 36, 0.04), 0 4rpx 8rpx rgba(60, 42, 36, 0.06);
-  --shadow-button: 0 4rpx 12rpx rgba(212, 132, 106, 0.2), 0 2rpx 6rpx rgba(212, 132, 106, 0.12);
-  --shadow-focus: 0 0 0 6rpx rgba(212, 132, 106, 0.15);
+  /* 阴影系统 — 冰冷、浅淡 */
+  --shadow-card: 0 1rpx 6rpx rgba(38, 58, 74, 0.03), 0 2rpx 8rpx rgba(38, 58, 74, 0.04);
+  --shadow-raised: 0 4rpx 12rpx rgba(38, 58, 74, 0.04), 0 4rpx 8rpx rgba(38, 58, 74, 0.05);
+  --shadow-button: 0 4rpx 12rpx rgba(91, 139, 160, 0.18), 0 2rpx 6rpx rgba(91, 139, 160, 0.1);
+  --shadow-focus: 0 0 0 6rpx rgba(91, 139, 160, 0.15);
 
   /* 触控目标 — Apple HIG 最小 44pt = 88rpx */
   --touch-min: 88rpx;
@@ -72,7 +77,6 @@ button {
   padding: 0;
   margin: 0;
   line-height: inherit;
-  /* Apple HIG: 最小触控区域 */
   min-height: var(--touch-min);
   min-width: var(--touch-min);
 }
@@ -80,7 +84,6 @@ button:focus { outline: 0; }
 button::after { border: none; }
 button[loading] { opacity: 0.75; }
 
-/* Apple 标准：可点元素最小触控区域 */
 .tappable {
   min-height: var(--touch-min);
   min-width: var(--touch-min);
@@ -89,7 +92,6 @@ button[loading] { opacity: 0.75; }
   justify-content: center;
 }
 
-/* 弹性交互：轻按缩放反馈 */
 .tappable:active,
 button:active:not([disabled]),
 .category-card:active,
@@ -99,4 +101,3 @@ button:active:not([disabled]),
   transform: scale(0.97);
   transition: transform var(--duration-fast) var(--ease-spring);
 }
-
