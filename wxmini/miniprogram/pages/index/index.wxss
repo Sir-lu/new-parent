@@ -112,6 +112,13 @@
   overflow-wrap: break-word;
 }
 
+/* 引导追问 */
+.ai-prompt { padding: 8rpx 0; }
+.ai-prompt-text {
+  font-size: 28rpx; color: var(--text-primary);
+  line-height: 1.7; display: block;
+}
+
 /* 加载动画 */
 .ai-loading {
   display: flex; gap: 6rpx; padding: 8rpx 0;

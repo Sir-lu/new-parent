@@ -31,30 +31,35 @@
             <text class="loading-dot">●</text><text class="loading-dot">●</text><text class="loading-dot">●</text>
           </view>
 
-          <!-- 冷静引导 -->
-          <view wx:if="{{!item.loading && item.coolDown}}" class="ai-cooldown">
+          <!-- 引导追问（isPrompt） -->
+          <view wx:if="{{!item.loading && item.isPrompt}}" class="ai-prompt">
+            <text class="ai-prompt-text">{{item.promptText}}</text>
+          </view>
+
+          <!-- 冷静引导（非 prompt 模式） -->
+          <view wx:elif="{{!item.loading && item.coolDown}}" class="ai-cooldown">
             <text class="ai-cooldown-icon">🧊</text>
             <text class="ai-cooldown-text">{{item.coolDown}}</text>
           </view>
 
           <!-- 共情 -->
-          <view wx:if="{{!item.loading && item.emotionalCheck}}" class="ai-empathy">
+          <view wx:if="{{!item.loading && !item.isPrompt && item.emotionalCheck}}" class="ai-empathy">
             <text>{{item.emotionalCheck}}</text>
           </view>
 
-          <!-- 沟通话术（核心，放最大） -->
-          <view wx:if="{{!item.loading && item.script}}" class="ai-script">
+          <!-- 沟通话术 -->
+          <view wx:if="{{!item.loading && !item.isPrompt && item.script}}" class="ai-script">
             <text class="ai-script-label">💬 可以这样对孩子说</text>
             <text class="ai-script-text">{{item.script}}</text>
           </view>
 
           <!-- 展开详细 -->
-          <view wx:if="{{!item.loading && !item.showDetail}}" class="ai-more" data-index="{{index}}" bindtap="toggleDetail">
+          <view wx:if="{{!item.loading && !item.isPrompt && !item.showDetail && item.rootCause}}" class="ai-more" data-index="{{index}}" bindtap="toggleDetail">
             <text>查看详细分析 →</text>
           </view>
 
           <!-- 详细内容 -->
-          <view wx:if="{{!item.loading && item.showDetail}}" class="ai-detail">
+          <view wx:if="{{!item.loading && !item.isPrompt && item.showDetail}}" class="ai-detail">
             <view class="ai-detail-item" wx:if="{{item.rootCause}}">
               <text class="detail-label">🔍 根源分析</text>
               <text class="detail-text">{{item.rootCause}}</text>
@@ -84,8 +89,8 @@
             </view>
           </view>
 
-          <!-- 评分 -->
-          <view wx:if="{{!item.loading}}" class="ai-rate">
+          <!-- 评分（仅完整分析时显示） -->
+          <view wx:if="{{!item.loading && !item.isPrompt}}" class="ai-rate">
             <text class="rate-hint">这个建议有帮助吗？</text>
             <view class="rate-stars">
               <text wx:for="{{[1,2,3,4,5]}}" wx:key="*this"
