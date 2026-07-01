@@ -21,6 +21,25 @@ function detectCrisis(text) {
   return CRISIS_KEYWORDS.some(kw => text.includes(kw));
 }
 
+/**
+ * 递归遍历并清除对象所有字符串字段中的 emoji 和特殊 Unicode 字符
+ * 微信小程序文字渲染引擎对 emoji、特殊符号（⏸�）等显示为乱码
+ */
+function stripEmoji(obj) {
+  if (typeof obj === "string") {
+    return obj.replace(/[\u{1F000}-\u{1FFFF}\u{2600}-\u{27BF}\u{2B50}\u{2B55}\u{231A}-\u{23FF}\u{FE00}-\u{FE0F}\u{200D}\u{20E3}\u{E000}-\u{F8FF}]/gu, "")
+              .replace(/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F700}-\u{1F77F}\u{1F780}-\u{1F7FF}\u{1F800}-\u{1F8FF}\u{1F900}-\u{1F9FF}\u{1FA00}-\u{1FA6F}\u{1FA70}-\u{1FAFF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{2300}-\u{23FF}\u{2B00}-\u{2BFF}\u{FE00}-\u{FE0F}\u{20D0}-\u{20FF}]/gu, "")
+              .replace(/�/g, "");   // Unicode 替换字符 U+FFFD
+  }
+  if (Array.isArray(obj)) return obj.map(stripEmoji);
+  if (obj && typeof obj === "object") {
+    const cleaned = {};
+    for (const key of Object.keys(obj)) cleaned[key] = stripEmoji(obj[key]);
+    return cleaned;
+  }
+  return obj;
+}
+
 function callDeepSeek(systemPrompt, userMessage) {
   return new Promise((resolve, reject) => {
     const postData = JSON.stringify({
@@ -130,6 +149,8 @@ exports.main = async (event, context) => {
       let aiResult;
       try {
         aiResult = await callDeepSeek(system, user);
+        // 过滤 emoji 和特殊字符（小程序的文字渲染不支持）
+        aiResult = stripEmoji(aiResult);
       } catch (err) {
         console.error("LLM 调用失败:", err.message);
         aiResult = fallbackResponse(scene);
