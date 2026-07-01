@@ -14,7 +14,7 @@
 /* ===== 消息列表 ===== */
 .msg-list {
   flex: 1;
-  padding: 20rpx 28rpx 12rpx;
+  padding: 20rpx 36rpx 12rpx;
   overflow-y: auto;
 }
 
@@ -24,7 +24,6 @@
   align-items: flex-end;
   margin-bottom: 24rpx;
   animation: msgIn 0.3s var(--ease-out);
-  width: 100%;
 }
 @keyframes msgIn {
   from { opacity: 0; transform: translateY(12rpx); }
@@ -44,7 +43,7 @@
   display: flex; align-items: center; justify-content: center;
   font-size: 32rpx;
   flex-shrink: 0;
-  margin-right: 16rpx;
+  margin: 0 14rpx 0 4rpx;
 }
 .user-avatar {
   width: 64rpx; height: 64rpx;
@@ -53,7 +52,7 @@
   display: flex; align-items: center; justify-content: center;
   font-size: 32rpx;
   flex-shrink: 0;
-  margin-left: 16rpx;
+  margin: 0 4rpx 0 14rpx;
 }
 
 /* ===== 气泡卡片 ===== */
