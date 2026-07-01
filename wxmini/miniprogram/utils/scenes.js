@@ -33,7 +33,7 @@ const SCENE_CATEGORIES = [
     scenes: [
       { id: "tantrum", name: "大哭大闹", icon: "😭", hint: "一不满足就崩溃、收不住" },
       { id: "anger", name: "发脾气摔东西", icon: "😤", hint: "摔门、砸东西、大喊大叫" },
-      { id: "shy", name: "胆小不敢尝试", icon: "🫣", hint: "什么都怕、总说"我不行"" }
+      { id: "shy", name: "胆小不敢尝试", icon: "🫣", hint: "什么都怕、总说「我不行」" }
     ]
   },
   {

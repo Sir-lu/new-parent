@@ -15,8 +15,8 @@ Page({
     personality: [],       // 选中的 value 数组
     birthOrder: "",
     notes: "",
-    // 选项列表
-    personalityOptions: PERSONALITY_OPTIONS,
+    // 选项列表（带 checked 状态，避开 WXML 不支持 indexOf 的问题）
+    personalityOptions: [],
     birthOrderOptions: BIRTH_ORDER_OPTIONS,
     gradeOptions: GRADE_OPTIONS,
     genderOptions: GENDER_OPTIONS,
@@ -27,6 +27,11 @@ Page({
   },
 
   onLoad(options) {
+    // 初始化性格选项，每个带 checked 字段
+    this.setData({
+      personalityOptions: PERSONALITY_OPTIONS.map(p => ({ ...p, checked: false }))
+    });
+
     if (options.id) {
       this.setData({ isEdit: true, childId: options.id });
       wx.setNavigationBarTitle({ title: "编辑档案" });
@@ -45,30 +50,29 @@ Page({
       wx.hideLoading();
       if (resp.result && resp.result.data) {
         const c = resp.result.data;
+        const personalityArr = c.personality || [];
         this.setData({
           name: c.name || "",
           birthYear: c.birthYear ? String(c.birthYear) : "",
           gender: c.gender || "",
           grade: c.grade || "",
-          personality: c.personality || [],
           birthOrder: c.birthOrder || "",
           notes: c.notes || ""
         });
-        this.updateComputed();
+        this.syncPersonalityChecked(personalityArr);
       }
     }).catch(() => {
       wx.hideLoading();
-      // 从本地找
       const local = wx.getStorageSync("local_children") || [];
       const c = local.find(x => x._id === id);
       if (c) {
+        const personalityArr = c.personality || [];
         this.setData({
           name: c.name || "", birthYear: String(c.birthYear || ""),
           gender: c.gender || "", grade: c.grade || "",
-          personality: c.personality || [], birthOrder: c.birthOrder || "",
-          notes: c.notes || ""
+          birthOrder: c.birthOrder || "", notes: c.notes || ""
         });
-        this.updateComputed();
+        this.syncPersonalityChecked(personalityArr);
       }
     });
   },
@@ -85,14 +89,25 @@ Page({
   selectGrade(e) { this.setData({ grade: e.currentTarget.dataset.value }); },
   selectBirthOrder(e) { this.setData({ birthOrder: e.currentTarget.dataset.value }); },
 
-  // 性格多选
+  // 性格多选 — 直接用 option 的 checked 字段切换
   togglePersonality(e) {
     const { value } = e.currentTarget.dataset;
-    let personality = [...this.data.personality];
-    const idx = personality.indexOf(value);
-    if (idx >= 0) personality.splice(idx, 1);
-    else personality.push(value);
-    this.setData({ personality });
+    const options = this.data.personalityOptions.map(p => {
+      if (p.value === value) return { ...p, checked: !p.checked };
+      return p;
+    });
+    const personality = options.filter(p => p.checked).map(p => p.value);
+    this.setData({ personalityOptions: options, personality });
+    this.updateComputed();
+  },
+
+  // 从已有 personality 数组同步 checked 状态
+  syncPersonalityChecked(personalityArr) {
+    const options = this.data.personalityOptions.map(p => ({
+      ...p,
+      checked: personalityArr.indexOf(p.value) >= 0
+    }));
+    this.setData({ personalityOptions: options, personality: personalityArr });
     this.updateComputed();
   },
 

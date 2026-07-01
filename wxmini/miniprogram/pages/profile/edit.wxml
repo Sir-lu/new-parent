@@ -46,10 +46,10 @@
     <view class="section-hint">选得越准，AI 给出的沟通方式越贴合孩子</view>
 
     <view wx:for="{{personalityOptions}}" wx:key="value"
-          class="personality-card {{personality.indexOf(item.value) >= 0 ? 'active' : ''}}"
+          class="personality-card {{item.checked ? 'active' : ''}}"
           data-value="{{item.value}}" bindtap="togglePersonality">
       <view class="personality-check">
-        {{personality.indexOf(item.value) >= 0 ? '☑' : '☐'}}
+        {{item.checked ? '☑' : '☐'}}
       </view>
       <view class="personality-body">
         <text class="personality-label">{{item.label}}</text>
