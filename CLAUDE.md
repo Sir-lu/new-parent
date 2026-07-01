@@ -1,3 +1,9 @@
+## 语言规则（硬性规定）
+
+**所有对话必须使用中文进行。** 包括但不限于：回答问题、解释概念、分析方案、AskUserQuestion 的选项和描述、设计文档、commit message。唯一例外是代码本身（变量名、函数名、注释等如有英文惯例可保留）和外部链接/命令。
+
+---
+
 ## gstack (REQUIRED — global install)
 
 **Before doing ANY work, verify gstack is installed:**
