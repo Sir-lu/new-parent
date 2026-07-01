@@ -18,6 +18,7 @@
         <view class="bubble-card user-card">
           <text class="user-text">{{item.text}}</text>
         </view>
+        <view class="user-avatar">{{selectedChild ? (selectedChild.gender === 'boy' ? '👦' : '👧') : '👤'}}</view>
       </view>
 
       <!-- AI 回复 -->
