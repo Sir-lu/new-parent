@@ -274,6 +274,45 @@ exports.main = async (event, context) => {
       }
     }
 
+    // ── 连通性测试 ──────────────────────────────
+    case "testConnection": {
+      // 不调用 LLM，只测网络和 API Key
+      return new Promise((resolve) => {
+        const postData = JSON.stringify({
+          model: "deepseek-chat",
+          messages: [{ role: "user", content: "回复OK" }],
+          max_tokens: 5
+        });
+        const req = https.request({
+          hostname: DEEPSEEK_API_HOST,
+          path: DEEPSEEK_API_PATH,
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${DEEPSEEK_API_KEY}`,
+            "Content-Length": Buffer.byteLength(postData)
+          },
+          timeout: 10000
+        }, (res) => {
+          let body = "";
+          res.on("data", chunk => body += chunk);
+          res.on("end", () => {
+            try {
+              const r = JSON.parse(body);
+              resolve({ success: true, message: "DeepSeek 连接正常", status: res.statusCode, model: r.model || "deepseek-chat" });
+            } catch (e) {
+              resolve({ success: false, error: "响应解析失败", raw: body.slice(0, 200), status: res.statusCode });
+            }
+          });
+        });
+        req.on("socket", (s) => s.setTimeout(8000));
+        req.on("error", (e) => resolve({ success: false, error: "网络连接失败: " + e.message }));
+        req.on("timeout", () => { req.destroy(); resolve({ success: false, error: "连接超时（10s）" }); });
+        req.write(postData);
+        req.end();
+      });
+    }
+
     // ── 调试 ────────────────────────────────────
     case "getOpenId": {
       return { success: true, data: { openid, appid: wxContext.APPID } };
