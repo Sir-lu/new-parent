@@ -1,0 +1,11 @@
+{
+  "envId": "cloud1-d5g9zm8d813d5e245",
+  "version": "2.0",
+  "functions": [
+    {
+      "name": "parentAI",
+      "timeout": 60,
+      "runtime": "Nodejs18.15"
+    }
+  ]
+}
