@@ -1,50 +1,137 @@
-<view class="container">
-
-  <!-- Hero -->
-  <view class="hero">
-    <view class="hero-title">孩子闹起来了？</view>
-    <view class="hero-sub">选一个最接近的场景，我来帮你想办法。</view>
-  </view>
-
-  <!-- 孩子档案快捷入口 -->
-  <view class="child-entry" bindtap="toProfileList">
-    <view class="child-entry-left">
-      <text class="child-entry-icon">{{selectedChild ? (selectedChild.gender === 'boy' ? '👦' : '👧') : '📋'}}</text>
-      <text class="child-entry-text" wx:if="{{selectedChild}}">当前：{{selectedChild.name}}（{{selectedChild.age}}岁）</text>
-      <text class="child-entry-text" wx:else>点击添加孩子档案，让建议更贴合</text>
-    </view>
-    <text class="child-entry-arrow">→</text>
-  </view>
-
-  <!-- 语音输入提示 -->
-  <view class="voice-tip">
-    <text class="voice-tip-icon">🎤</text>
-    <text class="voice-tip-text">试试用语音输入，比你打字快 10 倍</text>
-  </view>
-
-  <!-- 场景分类 -->
-  <view wx:for="{{categories}}" wx:key="id" class="category-card">
-    <view class="category-header" data-id="{{item.id}}" bindtap="toggleCategory">
-      <text class="category-name">{{item.name}}</text>
-      <text class="category-arrow {{expandedId === item.id ? 'open' : ''}}">▾</text>
-    </view>
-
-    <view class="scene-list {{expandedId === item.id ? 'show' : ''}}">
-      <view wx:for="{{item.scenes}}" wx:key="id" wx:for-item="scene"
-            class="scene-item"
-            data-scene="{{scene}}" data-category="{{item}}"
-            bindtap="selectScene">
-        <view class="scene-icon">{{scene.icon}}</view>
-        <view class="scene-info">
-          <view class="scene-name">{{scene.name}}</view>
-          <view class="scene-hint">{{scene.hint}}</view>
-        </view>
-        <text class="scene-go">→</text>
+<view class="chat-page">
+  <!-- 消息滚动区 -->
+  <scroll-view class="msg-list" scroll-y scroll-into-view="{{scrollTo}}" scroll-with-animation>
+    <!-- 欢迎消息 -->
+    <view class="msg-bubble ai" wx:if="{{messages.length === 0}}">
+      <view class="bubble-avatar">🧊</view>
+      <view class="bubble-card welcome">
+        <text class="welcome-title">遇到什么事了？</text>
+        <text class="welcome-sub">跟我说说刚才发生了什么，我来帮你分析。</text>
+        <text class="welcome-hint">可以先选下面的场景，或者直接说。</text>
       </view>
     </view>
-  </view>
 
-  <view class="footer">
-    <text class="footer-text">基于帆书新父母教育方法论 · 仅供参考</text>
+    <!-- 对话消息 -->
+    <view wx:for="{{messages}}" wx:key="id">
+      <!-- 用户消息 -->
+      <view wx:if="{{item.role === 'user'}}" class="msg-bubble user">
+        <view class="bubble-card user-card">
+          <text class="user-text">{{item.text}}</text>
+        </view>
+      </view>
+
+      <!-- AI 回复 -->
+      <view wx:if="{{item.role === 'ai'}}" class="msg-bubble ai">
+        <view class="bubble-avatar">🧊</view>
+        <view class="bubble-card ai-card">
+
+          <!-- 加载中 -->
+          <view wx:if="{{item.loading}}" class="ai-loading">
+            <text class="loading-dot">●</text><text class="loading-dot">●</text><text class="loading-dot">●</text>
+          </view>
+
+          <!-- 冷静引导 -->
+          <view wx:if="{{!item.loading && item.coolDown}}" class="ai-cooldown">
+            <text class="ai-cooldown-icon">🧊</text>
+            <text class="ai-cooldown-text">{{item.coolDown}}</text>
+          </view>
+
+          <!-- 共情 -->
+          <view wx:if="{{!item.loading && item.emotionalCheck}}" class="ai-empathy">
+            <text>{{item.emotionalCheck}}</text>
+          </view>
+
+          <!-- 沟通话术（核心，放最大） -->
+          <view wx:if="{{!item.loading && item.script}}" class="ai-script">
+            <text class="ai-script-label">💬 可以这样对孩子说</text>
+            <text class="ai-script-text">{{item.script}}</text>
+          </view>
+
+          <!-- 展开详细 -->
+          <view wx:if="{{!item.loading && !item.showDetail}}" class="ai-more" data-index="{{index}}" bindtap="toggleDetail">
+            <text>查看详细分析 →</text>
+          </view>
+
+          <!-- 详细内容 -->
+          <view wx:if="{{!item.loading && item.showDetail}}" class="ai-detail">
+            <view class="ai-detail-item" wx:if="{{item.rootCause}}">
+              <text class="detail-label">🔍 根源分析</text>
+              <text class="detail-text">{{item.rootCause}}</text>
+            </view>
+            <view class="ai-detail-item" wx:if="{{item.keyInsight}}">
+              <text class="detail-label">💡 一句话本质</text>
+              <text class="detail-text">{{item.keyInsight}}</text>
+            </view>
+            <view wx:if="{{item.steps && item.steps.length > 0}}">
+              <text class="detail-label">📋 分步行动</text>
+              <view wx:for="{{item.steps}}" wx:key="step" wx:for-item="step" class="ai-step">
+                <text class="step-num">{{step.step}}</text>
+                <view class="step-body">
+                  <text class="step-action">{{step.action}}</text>
+                  <text class="step-principle">📖 {{step.principle}}</text>
+                </view>
+              </view>
+            </view>
+            <view class="ai-detail-item" wx:if="{{item.methodTags && item.methodTags.length > 0}}">
+              <text class="detail-label">🏷️ 用到的方法</text>
+              <view class="detail-tags">
+                <text wx:for="{{item.methodTags}}" wx:key="*this" wx:for-item="tag" class="detail-tag">{{tag}}</text>
+              </view>
+            </view>
+            <view class="ai-more" data-index="{{index}}" bindtap="toggleDetail">
+              <text>收起 ↑</text>
+            </view>
+          </view>
+
+          <!-- 评分 -->
+          <view wx:if="{{!item.loading}}" class="ai-rate">
+            <text class="rate-hint">这个建议有帮助吗？</text>
+            <view class="rate-stars">
+              <text wx:for="{{[1,2,3,4,5]}}" wx:key="*this"
+                    class="rate-star {{item.rating >= $index ? 'on' : ''}}"
+                    data-index="{{index}}" data-rating="{{$index + 1}}"
+                    bindtap="rateMessage">☆</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view id="msg-bottom" style="height:4rpx;"></view>
+  </scroll-view>
+
+  <!-- 底部输入区 -->
+  <view class="input-bar">
+    <!-- 快捷选项行 -->
+    <view class="quick-row">
+      <scroll-view class="chip-scroll" scroll-x>
+        <!-- 场景 chips -->
+        <view wx:for="{{allScenes}}" wx:key="id"
+              class="quick-chip {{activeScene === item.id ? 'active' : ''}}"
+              data-scene="{{item}}"
+              bindtap="pickScene">
+          {{item.icon}} {{item.name}}
+        </view>
+      </scroll-view>
+      <!-- 孩子 chip -->
+      <view class="quick-chip child {{selectedChild ? 'has-child' : ''}}" bindtap="toProfileList">
+        {{selectedChild ? selectedChild.icon + ' ' + selectedChild.name : '👤 添加孩子'}}
+      </view>
+    </view>
+
+    <!-- 输入框 -->
+    <view class="input-row">
+      <input class="chat-input"
+             value="{{inputText}}"
+             placeholder="说说刚才发生了什么…"
+             placeholder-style="color:#B0C4CF; font-size:28rpx;"
+             maxlength="1000"
+             confirm-type="send"
+             bindinput="onInput"
+             bindconfirm="sendMessage"/>
+      <button class="send-btn {{inputText ? 'ready' : ''}}" bindtap="sendMessage">
+        <text>↑</text>
+      </button>
+    </view>
   </view>
 </view>

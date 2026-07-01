@@ -32,14 +32,14 @@
     placeholder="{{placeholder}}"
     placeholder-style="color:#C4A18A; font-size:28rpx;"
     auto-height
-    maxlength="500"
+    maxlength="1000"
     focus="{{true}}"
     bindinput="onInput"
     adjust-position="{{true}}"
   />
 
   <!-- 剩余字数 -->
-  <view class="char-count">{{userInput.length}}/500</view>
+  <view class="char-count">{{userInput.length}}/1000</view>
 
   <!-- 提交按钮 -->
   <button
