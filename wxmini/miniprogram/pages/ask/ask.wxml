@@ -1,0 +1,49 @@
+<view class="container">
+
+  <!-- 已选场景标签 -->
+  <view class="scene-tag">
+    <text class="scene-tag-label">{{categoryName}}</text>
+    <text class="scene-tag-arrow">›</text>
+    <text class="scene-tag-scene">{{sceneName}}</text>
+  </view>
+
+  <!-- 提示文字 -->
+  <view class="prompt">
+    <text class="prompt-text">用语音或文字说说刚才发生了什么，越具体越好。</text>
+  </view>
+
+  <!-- 输入区域 -->
+  <textarea
+    class="input-area"
+    value="{{userInput}}"
+    placeholder="{{placeholder}}"
+    placeholder-style="color:#C4A18A; font-size:28rpx;"
+    auto-height
+    maxlength="1000"
+    focus="{{true}}"
+    bindinput="onInput"
+    adjust-position="{{true}}"
+  />
+
+  <!-- 剩余字数 -->
+  <view class="char-count">{{userInput.length}}/1000</view>
+
+  <!-- 提交按钮 -->
+  <button
+    class="submit-btn {{submitting ? 'disabled' : ''}}"
+    bindtap="submitQuestion"
+    disabled="{{submitting}}"
+    loading="{{submitting}}"
+  >
+    {{submitting ? '正在分析…' : '📋 获取建议'}}
+  </button>
+
+  <!-- 温馨提示 -->
+  <view class="tips">
+    <view class="tips-title">💡 小提示</view>
+    <view class="tips-item">• 用微信输入法的 🎤 语音输入更快</view>
+    <view class="tips-item">• 说清楚时间、地点、孩子说了什么、你说了什么</view>
+    <view class="tips-item">• 不用担心写得不完美，AI 能理解大意</view>
+  </view>
+
+</view>

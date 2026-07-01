@@ -1,0 +1,117 @@
+page {
+  background: #FFF8F5;
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif;
+}
+.container { padding: 24rpx 32rpx 60rpx; }
+
+/* 共情卡片 */
+.empathy-card {
+  background: linear-gradient(135deg, #FFF0E8, #FFE8DB);
+  border-radius: 16rpx;
+  padding: 24rpx 28rpx;
+  margin-bottom: 24rpx;
+}
+.empathy-text { font-size: 28rpx; color: #B85C3A; line-height: 1.6; font-weight: 500; }
+
+/* 通用 section */
+.section { margin-bottom: 24rpx; }
+.section-title { font-size: 26rpx; font-weight: 600; color: #8C6E5A; margin-bottom: 12rpx; }
+.section-card {
+  background: #FFFFFF;
+  border-radius: 16rpx;
+  padding: 24rpx 28rpx;
+  box-shadow: 0 2rpx 12rpx rgba(141, 100, 74, 0.05);
+}
+.section-text { font-size: 28rpx; color: #2D1810; line-height: 1.7; }
+
+/* 一句话本质 */
+.insight-card {
+  background: linear-gradient(135deg, #FDF5EF, #FDF0E6);
+  border-radius: 16rpx;
+  padding: 24rpx 28rpx;
+  margin-bottom: 24rpx;
+  border-left: 6rpx solid #E8784A;
+}
+.insight-label { font-size: 24rpx; color: #B85C3A; display: block; margin-bottom: 8rpx; }
+.insight-text { font-size: 30rpx; color: #2D1810; line-height: 1.6; font-weight: 600; }
+
+/* 步骤卡片 */
+.step-card {
+  background: #FFFFFF;
+  border-radius: 16rpx;
+  padding: 24rpx 28rpx;
+  margin-bottom: 12rpx;
+  display: flex;
+  gap: 20rpx;
+  box-shadow: 0 2rpx 12rpx rgba(141, 100, 74, 0.05);
+}
+.step-number {
+  width: 48rpx;
+  height: 48rpx;
+  background: #FFEDE2;
+  color: #B85C3A;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26rpx;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+.step-content { flex: 1; }
+.step-action { font-size: 28rpx; color: #2D1810; line-height: 1.6; display: block; }
+.step-principle {
+  font-size: 22rpx;
+  color: #C4A18A;
+  margin-top: 8rpx;
+  display: block;
+}
+
+/* 沟通话术 */
+.script-card {
+  background: #FFFFFF;
+  border-radius: 16rpx;
+  padding: 28rpx;
+  box-shadow: 0 2rpx 12rpx rgba(141, 100, 74, 0.05);
+  border: 2rpx dashed #FFD5C0;
+}
+.script-text { font-size: 28rpx; color: #3D2010; line-height: 1.8; font-style: italic; }
+
+/* 方法标签 */
+.tag-row { display: flex; flex-wrap: wrap; gap: 12rpx; }
+.method-tag {
+  font-size: 22rpx;
+  color: #B85C3A;
+  background: #FFEDE2;
+  padding: 8rpx 20rpx;
+  border-radius: 20rpx;
+}
+
+/* 评分 */
+.rating-section { text-align: center; padding: 32rpx 0; }
+.stars-row { display: flex; justify-content: center; gap: 24rpx; margin-top: 16rpx; }
+.star-btn { display: flex; flex-direction: column; align-items: center; gap: 4rpx; }
+.star-emoji { font-size: 48rpx; }
+.star-label { font-size: 20rpx; color: #C4A18A; }
+.star-btn.active .star-emoji { transform: scale(1.1); }
+.thanks-text { font-size: 24rpx; color: #B85C3A; margin-top: 16rpx; }
+
+/* 免责 */
+.disclaimer { padding: 24rpx 0; text-align: center; }
+.disclaimer-text { font-size: 22rpx; color: #C4A18A; line-height: 1.6; }
+
+/* 再问一次 */
+.again-btn {
+  width: 100%;
+  height: 88rpx;
+  background: #FFFFFF;
+  color: #E8784A;
+  font-size: 28rpx;
+  font-weight: 500;
+  border-radius: 44rpx;
+  border: 2rpx solid #FFD5C0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.again-btn::after { border: none; }

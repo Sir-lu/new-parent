@@ -1,0 +1,73 @@
+<view wx:if="{{answer}}" class="container">
+
+  <!-- 情绪共情 -->
+  <view class="empathy-card">
+    <text class="empathy-text">{{answer.emotionalCheck}}</text>
+  </view>
+
+  <!-- 核心诊断 -->
+  <view class="section">
+    <view class="section-title">🔍 根源分析</view>
+    <view class="section-card">
+      <text class="section-text">{{answer.rootCause}}</text>
+    </view>
+  </view>
+
+  <!-- 一句话本质 -->
+  <view class="insight-card" wx:if="{{answer.keyInsight}}">
+    <text class="insight-label">💡 一句话本质</text>
+    <text class="insight-text">{{answer.keyInsight}}</text>
+  </view>
+
+  <!-- 分步行动 -->
+  <view class="section">
+    <view class="section-title">📋 你可以这样做</view>
+    <view wx:for="{{answer.steps}}" wx:key="step" class="step-card">
+      <view class="step-number">{{item.step}}</view>
+      <view class="step-content">
+        <text class="step-action">{{item.action}}</text>
+        <text class="step-principle">📖 {{item.principle}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 沟通话术 -->
+  <view class="section" wx:if="{{answer.script}}">
+    <view class="section-title">🗣️ 可以这样对孩子说</view>
+    <view class="script-card">
+      <text class="script-text">{{answer.script}}</text>
+    </view>
+  </view>
+
+  <!-- 方法论标签 -->
+  <view class="section" wx:if="{{answer.methodTags && answer.methodTags.length > 0}}">
+    <view class="section-title">🏷️ 用到的方法</view>
+    <view class="tag-row">
+      <text wx:for="{{answer.methodTags}}" wx:key="*this" class="method-tag">{{item}}</text>
+    </view>
+  </view>
+
+  <!-- 评分区域 -->
+  <view class="section rating-section">
+    <view class="section-title">这个建议有帮助吗？</view>
+    <view class="stars-row">
+      <view wx:for="{{[1,2,3,4,5]}}" wx:key="*this"
+            class="star-btn {{rated ? (rating >= item ? 'active' : '') : ''}}"
+            data-rating="{{item}}"
+            bindtap="rateAnswer">
+        <text class="star-emoji">{{rated && rating >= item ? '⭐' : '☆'}}</text>
+        <text class="star-label">{{item === 1 ? '没用' : item === 5 ? '太棒了' : ''}}</text>
+      </view>
+    </view>
+    <text wx:if="{{rated}}" class="thanks-text">感谢你的反馈！你的评分会帮助改进 AI 的质量 ❤️</text>
+  </view>
+
+  <!-- 免责声明 -->
+  <view class="disclaimer">
+    <text class="disclaimer-text">{{answer.disclaimer || '本建议基于帆书新父母教育方法论，仅供参考，不替代专业心理咨询。'}}</text>
+  </view>
+
+  <!-- 再问一次 -->
+  <button class="again-btn" bindtap="askAgain">再问一个问题</button>
+
+</view>

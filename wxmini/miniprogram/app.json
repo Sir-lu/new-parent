@@ -1,0 +1,17 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/ask/ask",
+    "pages/answer/answer"
+  ],
+  "window": {
+    "backgroundColor": "#FFF8F5",
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#FFF8F5",
+    "navigationBarTitleText": "新父母急救箱",
+    "navigationBarTextStyle": "black"
+  },
+  "sitemapLocation": "sitemap.json",
+  "style": "v2",
+  "lazyCodeLoading": "requiredComponents"
+}

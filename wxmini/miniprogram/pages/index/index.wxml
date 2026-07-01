@@ -1,0 +1,40 @@
+<view class="container">
+
+  <!-- Hero -->
+  <view class="hero">
+    <view class="hero-title">孩子闹起来了？</view>
+    <view class="hero-sub">选一个最接近的场景，我来帮你想办法。</view>
+  </view>
+
+  <!-- 语音输入提示 -->
+  <view class="voice-tip">
+    <text class="voice-tip-icon">🎤</text>
+    <text class="voice-tip-text">试试用语音输入，比你打字快 10 倍</text>
+  </view>
+
+  <!-- 场景分类 -->
+  <view wx:for="{{categories}}" wx:key="id" class="category-card">
+    <view class="category-header" data-id="{{item.id}}" bindtap="toggleCategory">
+      <text class="category-name">{{item.name}}</text>
+      <text class="category-arrow {{expandedId === item.id ? 'open' : ''}}">▾</text>
+    </view>
+
+    <view class="scene-list {{expandedId === item.id ? 'show' : ''}}">
+      <view wx:for="{{item.scenes}}" wx:key="id" wx:for-item="scene"
+            class="scene-item"
+            data-scene="{{scene}}" data-category="{{item}}"
+            bindtap="selectScene">
+        <view class="scene-icon">{{scene.icon}}</view>
+        <view class="scene-info">
+          <view class="scene-name">{{scene.name}}</view>
+          <view class="scene-hint">{{scene.hint}}</view>
+        </view>
+        <text class="scene-go">›</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="footer">
+    <text class="footer-text">基于帆书新父母教育方法论 · 仅供参考</text>
+  </view>
+</view>

@@ -1,0 +1,71 @@
+page {
+  background: #FFF8F5;
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif;
+}
+.container { padding: 24rpx 32rpx 60rpx; }
+
+/* 场景标签 */
+.scene-tag {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  padding: 16rpx 0;
+  margin-bottom: 20rpx;
+}
+.scene-tag-label { font-size: 24rpx; color: #B85C3A; background: #FFEDE2; padding: 6rpx 16rpx; border-radius: 8rpx; }
+.scene-tag-arrow { font-size: 24rpx; color: #C4A18A; }
+.scene-tag-scene { font-size: 28rpx; font-weight: 600; color: #3D2010; }
+
+/* 提示 */
+.prompt { margin-bottom: 20rpx; }
+.prompt-text { font-size: 26rpx; color: #8C6E5A; line-height: 1.5; }
+
+/* 输入框 */
+.input-area {
+  width: 100%;
+  min-height: 280rpx;
+  background: #FFFFFF;
+  border-radius: 20rpx;
+  padding: 28rpx;
+  font-size: 28rpx;
+  color: #2D1810;
+  line-height: 1.6;
+  box-shadow: 0 2rpx 16rpx rgba(141, 100, 74, 0.06);
+  box-sizing: border-box;
+}
+
+.char-count {
+  text-align: right;
+  font-size: 22rpx;
+  color: #C4A18A;
+  margin-top: 8rpx;
+  margin-bottom: 32rpx;
+}
+
+/* 提交按钮 */
+.submit-btn {
+  width: 100%;
+  height: 96rpx;
+  background: linear-gradient(135deg, #E8784A, #D4603A);
+  color: #FFFFFF;
+  font-size: 32rpx;
+  font-weight: 600;
+  border-radius: 48rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+}
+.submit-btn.disabled { opacity: 0.6; }
+.submit-btn::after { border: none; }
+
+/* 小提示 */
+.tips {
+  margin-top: 48rpx;
+  padding: 28rpx;
+  background: #FFFFFF;
+  border-radius: 20rpx;
+  box-shadow: 0 2rpx 16rpx rgba(141, 100, 74, 0.06);
+}
+.tips-title { font-size: 26rpx; font-weight: 600; color: #2D1810; margin-bottom: 16rpx; }
+.tips-item { font-size: 24rpx; color: #8C6E5A; line-height: 1.8; }
