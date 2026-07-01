@@ -1,60 +1,90 @@
-page { background: #FFF8F5; font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif; }
-.container { padding: 24rpx 32rpx 60rpx; }
+/*
+ * 档案列表 — 孩子的家
+ */
 
-.header { text-align: center; padding: 40rpx 16rpx 32rpx; }
-.header-title { font-size: 36rpx; font-weight: 700; color: #2D1810; display: block; }
-.header-sub { font-size: 26rpx; color: #8C6E5A; margin-top: 12rpx; line-height: 1.5; display: block; }
+.container { padding: 24rpx 32rpx 80rpx; }
 
+.header { text-align: center; padding: 36rpx 16rpx 32rpx; }
+.header-title {
+  font-size: 38rpx; font-weight: 800;
+  color: var(--text-primary); display: block;
+}
+.header-sub {
+  font-size: 26rpx; color: var(--text-secondary);
+  margin-top: 10rpx; line-height: 1.5; display: block;
+}
+
+/* ===== 空状态 ===== */
 .empty { text-align: center; padding: 80rpx 40rpx; }
 .empty-icon { font-size: 80rpx; display: block; }
-.empty-text { font-size: 28rpx; color: #8C6E5A; margin-top: 20rpx; display: block; }
-.empty-sub { font-size: 24rpx; color: #C4A18A; margin-top: 8rpx; display: block; }
+.empty-text { font-size: 28rpx; color: var(--text-secondary); margin-top: 20rpx; display: block; }
+.empty-sub { font-size: 24rpx; color: var(--text-muted); margin-top: 8rpx; display: block; }
 
-.loading { text-align: center; padding: 60rpx; color: #C4A18A; }
+.loading { text-align: center; padding: 60rpx; color: var(--text-muted); }
 
-/* 孩子卡片 */
+/* ===== 孩子卡片 ===== */
 .child-card {
-  background: #FFFFFF;
-  border-radius: 20rpx;
-  padding: 24rpx 28rpx;
+  background: var(--bg-card);
+  border-radius: var(--radius-xl);
+  padding: 28rpx;
   margin-bottom: 16rpx;
   display: flex;
   align-items: center;
-  box-shadow: 0 2rpx 12rpx rgba(141, 100, 74, 0.05);
+  box-shadow: var(--shadow-card);
   border: 2rpx solid transparent;
-  transition: border 0.2s;
+  transition: all 0.2s;
 }
-.child-card.selected { border-color: #E8784A; background: #FFF9F5; }
+.child-card.selected {
+  border-color: var(--color-primary);
+  background: linear-gradient(135deg, var(--bg-card) 0%, var(--color-primary-ghost) 100%);
+}
 
 .child-select-area { flex: 1; display: flex; align-items: center; gap: 20rpx; }
-.child-avatar { font-size: 52rpx; flex-shrink: 0; }
-.child-info { flex: 1; }
-.child-name { font-size: 30rpx; font-weight: 600; color: #2D1810; }
-.child-age { font-size: 24rpx; color: #B85C3A; margin-left: 12rpx; }
-.child-stage { font-size: 22rpx; color: #C4A18A; margin-left: 8rpx; background: #FFEDE2; padding: 2rpx 10rpx; border-radius: 6rpx; }
-.child-detail { font-size: 24rpx; color: #8C6E5A; margin-top: 6rpx; }
-.child-select-hint { font-size: 22rpx; color: #C4A18A; margin-top: 4rpx; }
-
-.child-actions { display: flex; gap: 12rpx; flex-shrink: 0; margin-left: 16rpx; }
-.action-btn { width: 56rpx; height: 56rpx; display: flex; align-items: center; justify-content: center; border-radius: 14rpx; font-size: 28rpx; }
-.action-btn.edit { background: #F5F0EC; }
-.action-btn.delete { background: #FFEDE2; }
-
-/* 添加按钮 */
-.add-btn {
-  width: 100%;
-  height: 96rpx;
-  background: linear-gradient(135deg, #E8784A, #D4603A);
-  color: #FFFFFF;
-  font-size: 30rpx;
-  font-weight: 500;
-  border-radius: 48rpx;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8rpx;
-  margin-top: 16rpx;
-  border: none;
+.child-avatar {
+  width: 80rpx; height: 80rpx;
+  background: linear-gradient(135deg, var(--color-primary-ghost) 0%, var(--color-primary-light) 100%);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 44rpx; flex-shrink: 0;
 }
+.child-info { flex: 1; }
+.child-name { font-size: 30rpx; font-weight: 700; color: var(--text-primary); }
+.child-age {
+  font-size: 24rpx; color: var(--color-primary-dark);
+  margin-left: 12rpx; font-weight: 600;
+}
+.child-stage {
+  font-size: 20rpx; color: var(--color-primary);
+  margin-left: 8rpx;
+  background: var(--color-primary-ghost);
+  padding: 2rpx 12rpx; border-radius: var(--radius-sm);
+}
+.child-detail { font-size: 24rpx; color: var(--text-secondary); margin-top: 6rpx; }
+.child-select-hint { font-size: 22rpx; color: var(--text-muted); margin-top: 4rpx; }
+
+.child-actions { display: flex; gap: 8rpx; flex-shrink: 0; margin-left: 12rpx; }
+.action-btn {
+  width: 56rpx; height: 56rpx;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: var(--radius-md);
+  font-size: 26rpx;
+  transition: all 0.2s;
+}
+.action-btn.edit { background: var(--bg-soft); }
+.action-btn.delete { background: var(--color-primary-ghost); }
+.action-btn:active { transform: scale(0.9); }
+
+/* ===== 添加按钮 ===== */
+.add-btn {
+  width: 100%; height: 100rpx;
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+  color: #FFFFFF; font-size: 30rpx; font-weight: 700;
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-button);
+  display: flex; align-items: center; justify-content: center;
+  gap: 8rpx; margin-top: 12rpx; border: none;
+  transition: all 0.2s;
+}
+.add-btn:active { transform: scale(0.97); }
 .add-btn::after { border: none; }
-.add-icon { font-size: 36rpx; font-weight: 300; }
+.add-icon { font-size: 34rpx; font-weight: 300; }

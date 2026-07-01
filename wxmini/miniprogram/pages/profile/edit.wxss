@@ -1,96 +1,134 @@
-page { background: #FFF8F5; font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif; }
-.container { padding: 24rpx 32rpx 80rpx; }
+/*
+ * 档案编辑页 — 添加/修改孩子
+ * 设计：表单呼吸感，选项卡片视觉清晰
+ */
 
-/* 分区 */
-.section { margin-bottom: 32rpx; }
-.section-title { font-size: 30rpx; font-weight: 600; color: #2D1810; margin-bottom: 8rpx; }
-.section-hint { font-size: 24rpx; color: #C4A18A; margin-bottom: 16rpx; }
+.container { padding: 24rpx 32rpx 100rpx; }
 
-/* 表单 */
+/* ===== 分区 ===== */
+.section { margin-bottom: 36rpx; }
+.section-title { font-size: 30rpx; font-weight: 700; color: var(--text-primary); margin-bottom: 6rpx; }
+.section-hint { font-size: 24rpx; color: var(--text-muted); margin-bottom: 16rpx; }
+
+/* ===== 表单 ===== */
 .form-group { margin-bottom: 24rpx; }
-.label { font-size: 26rpx; color: #3D2010; font-weight: 500; display: block; margin-bottom: 12rpx; }
-.required { color: #E8784A; }
+.label { font-size: 26rpx; color: var(--text-primary); font-weight: 600; display: block; margin-bottom: 12rpx; }
+.required { color: var(--color-primary); }
 
 .input {
-  background: #FFFFFF;
-  border-radius: 14rpx;
-  padding: 20rpx 24rpx;
+  background: var(--bg-card);
+  border-radius: var(--radius-md);
+  padding: 22rpx 24rpx;
   font-size: 28rpx;
-  color: #2D1810;
-  box-shadow: 0 2rpx 8rpx rgba(141, 100, 74, 0.04);
+  color: var(--text-primary);
+  box-shadow: var(--shadow-card);
+  border: 2rpx solid transparent;
+  transition: border-color 0.3s;
 }
+.input:focus { border-color: var(--color-primary-light); }
 
-/* 选项行 */
-.option-row { display: flex; flex-wrap: wrap; gap: 16rpx; }
+/* ===== 选项 chips ===== */
+.option-row { display: flex; flex-wrap: wrap; gap: 14rpx; }
 .option-grid { display: flex; flex-wrap: wrap; gap: 12rpx; }
 .option-chip {
   padding: 16rpx 28rpx;
-  background: #FFFFFF;
-  border-radius: 12rpx;
-  font-size: 26rpx;
-  color: #8C6E5A;
-  box-shadow: 0 2rpx 8rpx rgba(141, 100, 74, 0.04);
+  background: var(--bg-card);
+  border-radius: var(--radius-md);
+  font-size: 26rpx; color: var(--text-secondary);
+  box-shadow: var(--shadow-card);
   border: 2rpx solid transparent;
-  transition: all 0.15s;
+  transition: all 0.2s;
 }
-.option-chip.active { background: #FFEDE2; color: #B85C3A; border-color: #E8784A; font-weight: 600; }
+.option-chip:active { transform: scale(0.96); }
+.option-chip.active {
+  background: var(--color-primary-ghost);
+  color: var(--color-primary-dark);
+  border-color: var(--color-primary);
+  font-weight: 700;
+}
 
-/* 出生年份 + 年龄 */
+/* ===== 出生年份 ===== */
 .birth-row { display: flex; align-items: center; gap: 20rpx; }
-.birth-input { width: 200rpx; }
-.age-preview { font-size: 26rpx; color: #B85C3A; font-weight: 600; }
+.birth-input { width: 220rpx; }
+.age-preview {
+  font-size: 28rpx; color: var(--color-primary-dark);
+  font-weight: 800;
+  background: var(--color-primary-ghost);
+  padding: 10rpx 24rpx;
+  border-radius: var(--radius-md);
+}
 
-/* 性格卡片 */
+/* ===== 性格卡片 ===== */
 .personality-card {
   display: flex;
   align-items: flex-start;
   gap: 16rpx;
-  padding: 20rpx 24rpx;
-  margin-bottom: 12rpx;
-  background: #FFFFFF;
-  border-radius: 14rpx;
-  box-shadow: 0 2rpx 8rpx rgba(141, 100, 74, 0.04);
+  padding: 24rpx 28rpx;
+  margin-bottom: 10rpx;
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
   border: 2rpx solid transparent;
-  transition: all 0.15s;
+  transition: all 0.2s;
 }
-.personality-card.active { border-color: #E8784A; background: #FFF9F5; }
-.personality-check { font-size: 32rpx; color: #C4A18A; flex-shrink: 0; margin-top: 4rpx; }
-.personality-card.active .personality-check { color: #E8784A; }
+.personality-card:active { transform: scale(0.985); }
+.personality-card.active {
+  border-color: var(--color-primary);
+  background: linear-gradient(135deg, var(--bg-card) 0%, var(--color-primary-ghost) 100%);
+}
+.personality-check {
+  font-size: 34rpx;
+  color: var(--text-muted);
+  flex-shrink: 0;
+  margin-top: 2rpx;
+  transition: color 0.2s;
+}
+.personality-card.active .personality-check { color: var(--color-primary); }
 .personality-body { flex: 1; }
-.personality-label { font-size: 28rpx; font-weight: 500; color: #2D1810; display: block; }
-.personality-desc { font-size: 22rpx; color: #B09A8A; margin-top: 4rpx; display: block; line-height: 1.4; }
+.personality-label {
+  font-size: 28rpx; font-weight: 600; color: var(--text-primary); display: block;
+}
+.personality-desc {
+  font-size: 22rpx; color: var(--text-muted);
+  margin-top: 4rpx; display: block; line-height: 1.45;
+}
 
-/* 文本域 */
+/* ===== 文本域 ===== */
 .textarea {
-  width: 100%;
-  min-height: 140rpx;
-  background: #FFFFFF;
-  border-radius: 14rpx;
-  padding: 20rpx 24rpx;
-  font-size: 28rpx;
-  color: #2D1810;
-  line-height: 1.6;
-  box-shadow: 0 2rpx 8rpx rgba(141, 100, 74, 0.04);
+  width: 100%; min-height: 150rpx;
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  padding: 24rpx 28rpx;
+  font-size: 28rpx; color: var(--text-primary);
+  line-height: 1.65;
+  box-shadow: var(--shadow-card);
   box-sizing: border-box;
+  border: 2rpx solid transparent;
+  transition: border-color 0.3s;
 }
-.char-count { text-align: right; font-size: 22rpx; color: #C4A18A; margin-top: 6rpx; }
+.textarea:focus { border-color: var(--color-primary-light); }
+.char-count { text-align: right; font-size: 22rpx; color: var(--text-muted); margin-top: 8rpx; }
 
-/* 提交 */
+/* ===== 提交按钮 ===== */
 .submit-btn {
-  width: 100%; height: 96rpx;
-  background: linear-gradient(135deg, #E8784A, #D4603A);
-  color: #FFFFFF; font-size: 32rpx; font-weight: 600;
-  border-radius: 48rpx; display: flex; align-items: center; justify-content: center;
-  margin-top: 16rpx; border: none;
+  width: 100%; height: 100rpx;
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+  color: #FFFFFF; font-size: 32rpx; font-weight: 700;
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-button);
+  display: flex; align-items: center; justify-content: center;
+  margin-top: 24rpx; border: none;
+  transition: all 0.2s;
 }
-.submit-btn.disabled { opacity: 0.6; }
+.submit-btn:active { transform: scale(0.97); }
+.submit-btn.disabled { opacity: 0.5; background: var(--text-muted); }
 .submit-btn::after { border: none; }
 
-/* 预览卡片 */
+/* ===== 预览卡片 ===== */
 .preview-card {
-  margin-top: 32rpx; padding: 24rpx 28rpx;
-  background: #FFFFFF; border-radius: 16rpx;
-  box-shadow: 0 2rpx 12rpx rgba(141, 100, 74, 0.05);
+  margin-top: 32rpx; padding: 28rpx;
+  background: var(--bg-card); border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
 }
-.preview-title { font-size: 24rpx; color: #C4A18A; display: block; margin-bottom: 12rpx; }
-.preview-line { font-size: 26rpx; color: #2D1810; line-height: 1.8; display: block; }
+.preview-title { font-size: 24rpx; color: var(--text-muted); display: block; margin-bottom: 12rpx; }
+.preview-line { font-size: 26rpx; color: var(--text-primary); line-height: 1.8; display: block; }

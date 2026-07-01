@@ -1,27 +1,56 @@
-/**app.wxss**/
-.container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  box-sizing: border-box;
-} 
+/*
+ * 新父母急救箱 — 全局设计系统
+ * 美学方向：「温暖毛毯」— 柔和、治愈、被拥抱
+ * 不是工具，不是诊所。是家长崩溃时打开的第一道光。
+ */
+
+/* ===== 设计令牌 (Design Tokens) ===== */
+page {
+  /* 底色：暖奶油渐变 */
+  --bg-primary: #FEF9F3;
+  --bg-warm: #FEF5ED;
+  --bg-card: #FFFCF9;
+  --bg-soft: #FCF6F0;
+
+  /* 主色：温柔陶土 */
+  --color-primary: #D4846A;
+  --color-primary-dark: #C07058;
+  --color-primary-light: #F8E0D5;
+  --color-primary-ghost: #FDF2EC;
+
+  /* 文字：深暖棕 */
+  --text-primary: #3C2A24;
+  --text-secondary: #8B6E5E;
+  --text-muted: #B8A395;
+
+  /* 辅助色 */
+  --color-sage: #8B9D83;
+  --color-lavender: #B8A9C9;
+  --color-honey: #E8C87A;
+
+  /* 圆角系统 */
+  --radius-sm: 12rpx;
+  --radius-md: 20rpx;
+  --radius-lg: 28rpx;
+  --radius-xl: 36rpx;
+
+  /* 阴影系统 — 柔和、像纸的投影 */
+  --shadow-card: 0 4rpx 24rpx rgba(60, 42, 36, 0.04);
+  --shadow-raised: 0 8rpx 40rpx rgba(60, 42, 36, 0.06);
+  --shadow-button: 0 6rpx 20rpx rgba(212, 132, 106, 0.25);
+
+  background: var(--bg-primary);
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", sans-serif;
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+}
 
 button {
   background: initial;
+  padding: 0;
+  margin: 0;
+  line-height: inherit;
 }
-
-button:focus{
-  outline: 0;
-}
-
-button::after{
-  border: none;
-}
-
-
-page {
-  background: #f6f6f6;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-}
+button:focus { outline: 0; }
+button::after { border: none; }
+button[loading] { opacity: 0.75; }
