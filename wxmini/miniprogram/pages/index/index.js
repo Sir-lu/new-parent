@@ -1,5 +1,6 @@
 const { profileToContext } = require("../../utils/childProfile.js");
 const { ensureLogin } = require("../../utils/auth.js");
+const { formatHistoryTime, historyPreview } = require("../../utils/history.js");
 
 Page({
   data: {
@@ -9,7 +10,18 @@ Page({
     inputText: "",
     scrollTo: "",
     sending: false,
-    isLoggedIn: false
+    isLoggedIn: false,
+    drawerOpen: false,
+    historyList: [],
+    historyLoading: false,
+    statusBarHeight: 20
+  },
+
+  onLoad() {
+    const windowInfo = wx.getWindowInfo ? wx.getWindowInfo() : wx.getSystemInfoSync();
+    this.setData({
+      statusBarHeight: windowInfo.statusBarHeight || 20
+    });
   },
 
   onShow() {
@@ -54,6 +66,75 @@ Page({
 
   onInput(e) {
     this.setData({ inputText: e.detail.value });
+  },
+
+  preventMove() {},
+
+  openDrawer() {
+    if (!getApp().globalData.isLoggedIn) {
+      ensureLogin();
+      return;
+    }
+    this.setData({ drawerOpen: true });
+    this.loadHistory();
+  },
+
+  closeDrawer() {
+    this.setData({ drawerOpen: false });
+  },
+
+  loadHistory() {
+    this.setData({ historyLoading: true });
+    wx.cloud.callFunction({
+      name: "parentAI",
+      data: { type: "getHistory" }
+    }).then(resp => {
+      const raw = (resp.result && resp.result.data) ? resp.result.data : [];
+      const historyList = raw.map(item => ({
+        ...item,
+        title: (item.question || "").trim().slice(0, 36) || "无标题",
+        preview: historyPreview(item).slice(0, 48),
+        timeText: formatHistoryTime(item.createdAt)
+      }));
+      this.setData({ historyList, historyLoading: false });
+    }).catch(() => {
+      this.setData({ historyList: [], historyLoading: false });
+    });
+  },
+
+  openHistoryItem(e) {
+    const { id } = e.currentTarget.dataset;
+    const item = this.data.historyList.find(h => h._id === id);
+    if (!item) return;
+
+    const answer = item.answer || {};
+    const messages = [
+      { id: id + "_u", role: "user", text: item.question },
+      {
+        ...answer,
+        id: id + "_a",
+        role: "ai",
+        loading: false,
+        showDetail: false,
+        rating: item.rating || 0,
+        _id: id
+      }
+    ];
+
+    this.setData({
+      messages,
+      drawerOpen: false,
+      scrollTo: "msg-bottom"
+    });
+  },
+
+  startNewChat() {
+    this.setData({
+      messages: [],
+      inputText: "",
+      drawerOpen: false,
+      scrollTo: ""
+    });
   },
 
   // 发送消息

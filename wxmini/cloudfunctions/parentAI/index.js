@@ -141,6 +141,29 @@ function callDeepSeek(systemPrompt, userMessage) {
   });
 }
 
+const LLM_MAX_RETRIES = 3;
+const LLM_RETRY_DELAY_MS = 1000;
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function callDeepSeekWithRetry(systemPrompt, userMessage) {
+  let lastErr;
+  for (let attempt = 1; attempt <= LLM_MAX_RETRIES; attempt++) {
+    try {
+      return await callDeepSeek(systemPrompt, userMessage);
+    } catch (err) {
+      lastErr = err;
+      console.error(`LLM 调用失败 (${attempt}/${LLM_MAX_RETRIES}):`, err.message);
+      if (attempt < LLM_MAX_RETRIES) {
+        await sleep(LLM_RETRY_DELAY_MS);
+      }
+    }
+  }
+  throw lastErr;
+}
+
 function fallbackResponse(scene) {
   return {
     rootCause: "（AI 暂时不可用）从你的描述来看，这符合家庭教育中常见的行为模式。",
@@ -167,24 +190,94 @@ exports.main = async (event, context) => {
 
   switch (type) {
 
-    // ── 微信登录 ────────────────────────────────
-    case "login": {
+    // ── 检查登录状态（判断是否首次登录）──────────
+    case "checkUser": {
       const authErr = requireOpenId(openid);
       if (authErr) return authErr;
+
       try {
         await ensureCollection("users");
         const { data } = await db.collection("users").where({ openid }).limit(1).get();
         const now = db.serverDate();
+
         if (data.length === 0) {
-          const result = await db.collection("users").add({
-            data: { openid, createdAt: now, lastLoginAt: now }
-          });
-          return { success: true, data: { openid, userId: result._id } };
+          return { success: true, needProfileSetup: true, isNewUser: true };
         }
-        await db.collection("users").doc(data[0]._id).update({
+
+        const user = data[0];
+        const nickName = (user.nickName || "").trim();
+        const avatarUrl = (user.avatarUrl || "").trim();
+        const needProfileSetup = !nickName || !avatarUrl;
+
+        if (needProfileSetup) {
+          return {
+            success: true,
+            needProfileSetup: true,
+            isNewUser: false,
+            userId: user._id,
+            partialProfile: { nickName, avatarUrl }
+          };
+        }
+
+        await db.collection("users").doc(user._id).update({
           data: { lastLoginAt: now }
         });
-        return { success: true, data: { openid, userId: data[0]._id } };
+
+        return {
+          success: true,
+          needProfileSetup: false,
+          isNewUser: false,
+          data: {
+            openid,
+            userId: user._id,
+            nickName: user.nickName,
+            avatarUrl: user.avatarUrl
+          }
+        };
+      } catch (err) {
+        return { success: false, error: err.message || err.errMsg };
+      }
+    }
+
+    // ── 微信登录（保存/更新昵称头像）──────────────
+    case "login": {
+      const authErr = requireOpenId(openid);
+      if (authErr) return authErr;
+
+      const { nickName, avatarFileID } = event;
+      if (!nickName || !avatarFileID) {
+        return { success: false, error: "请完善昵称和头像" };
+      }
+
+      try {
+        await ensureCollection("users");
+        const { data } = await db.collection("users").where({ openid }).limit(1).get();
+        const now = db.serverDate();
+        const profileFields = { nickName, avatarUrl: avatarFileID };
+
+        if (data.length === 0) {
+          const result = await db.collection("users").add({
+            data: { openid, createdAt: now, lastLoginAt: now, ...profileFields }
+          });
+          return {
+            success: true,
+            data: { openid, userId: result._id, ...profileFields }
+          };
+        }
+
+        const existing = data[0];
+        await db.collection("users").doc(existing._id).update({
+          data: { lastLoginAt: now, ...profileFields }
+        });
+
+        return {
+          success: true,
+          data: {
+            openid,
+            userId: existing._id,
+            ...profileFields
+          }
+        };
       } catch (err) {
         return { success: false, error: err.message || err.errMsg };
       }
@@ -219,11 +312,10 @@ exports.main = async (event, context) => {
 
       let aiResult;
       try {
-        aiResult = await callDeepSeek(system, user);
-        // 过滤 emoji 和特殊字符（小程序的文字渲染不支持）
+        aiResult = await callDeepSeekWithRetry(system, user);
         aiResult = stripEmoji(aiResult);
       } catch (err) {
-        console.error("LLM 调用失败:", err.message);
+        console.error("LLM 重试耗尽，使用兜底回复:", err.message);
         aiResult = fallbackResponse(scene);
       }
 

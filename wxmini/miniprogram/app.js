@@ -1,4 +1,6 @@
 // app.js — 新父母急救箱
+const { isProfileComplete } = require("./utils/auth.js");
+
 App({
   onLaunch() {
     if (!wx.cloud) {
@@ -19,20 +21,27 @@ App({
     const savedChildId = wx.getStorageSync("selectedChildId") || "";
     const savedChild = wx.getStorageSync("selectedChild") || null;
     const savedUser = wx.getStorageSync("userInfo") || null;
+    const loggedIn = isProfileComplete(savedUser);
 
     this.globalData = {
       lastAnswer: null,
       lastQuestion: null,
       selectedChildId: savedChildId,
       selectedChild: savedChild,
-      isLoggedIn: !!(savedUser && savedUser.openid),
+      isLoggedIn: loggedIn,
       openid: savedUser ? savedUser.openid : "",
-      userInfo: savedUser
+      userInfo: loggedIn ? savedUser : null
     };
 
-    // 已登录用户启动时静默续登
-    if (this.globalData.isLoggedIn) {
-      this.login({ silent: true }).catch(() => {
+    // 本地缓存资料不完整时清除，避免误判为已登录
+    if (savedUser && !loggedIn) {
+      wx.removeStorageSync("userInfo");
+      this.globalData.openid = "";
+    }
+
+    // 资料完整的用户启动时静默续登
+    if (loggedIn) {
+      this.checkLogin({ silent: true }).catch(() => {
         this.clearLogin();
       });
     }
@@ -64,14 +73,15 @@ App({
   },
 
   saveLogin(userInfo) {
+    if (!isProfileComplete(userInfo)) return;
     this.globalData.isLoggedIn = true;
     this.globalData.openid = userInfo.openid;
     this.globalData.userInfo = userInfo;
     wx.setStorageSync("userInfo", userInfo);
   },
 
-  // 微信登录：wx.login + 云函数获取 openid 并写入 users 集合
-  login(options = {}) {
+  // 检查登录状态，判断是否首次登录
+  checkLogin(options = {}) {
     const { silent = false } = options;
 
     return new Promise((resolve, reject) => {
@@ -83,16 +93,17 @@ App({
         success: () => {
           wx.cloud.callFunction({
             name: "parentAI",
-            data: { type: "login" }
+            data: { type: "checkUser" }
           }).then(resp => {
             if (!silent) wx.hideLoading();
 
-            if (resp.result && resp.result.success && resp.result.data) {
-              this.saveLogin(resp.result.data);
-              if (!silent) {
-                wx.showToast({ title: "登录成功", icon: "success", duration: 1200 });
+            if (resp.result && resp.result.success) {
+              if (resp.result.needProfileSetup) {
+                if (silent) this.clearLogin();
+              } else if (resp.result.data) {
+                this.saveLogin(resp.result.data);
               }
-              resolve(resp.result.data);
+              resolve(resp.result);
             } else {
               const errMsg = resp.result?.error || "登录失败，请重试";
               if (!silent) wx.showToast({ title: errMsg, icon: "none" });
@@ -109,6 +120,34 @@ App({
           if (!silent) wx.showToast({ title: "微信登录失败", icon: "none" });
           reject(err);
         }
+      });
+    });
+  },
+
+  // 首次登录完善资料后保存昵称/头像
+  completeProfile(nickName, avatarFileID) {
+    return new Promise((resolve, reject) => {
+      wx.showLoading({ title: "保存中…", mask: true });
+
+      wx.cloud.callFunction({
+        name: "parentAI",
+        data: { type: "login", nickName, avatarFileID }
+      }).then(resp => {
+        wx.hideLoading();
+
+        if (resp.result && resp.result.success && resp.result.data) {
+          this.saveLogin(resp.result.data);
+          wx.showToast({ title: "登录成功", icon: "success", duration: 1200 });
+          resolve(resp.result.data);
+        } else {
+          const errMsg = resp.result?.error || "保存失败，请重试";
+          wx.showToast({ title: errMsg, icon: "none" });
+          reject(new Error(errMsg));
+        }
+      }).catch(err => {
+        wx.hideLoading();
+        wx.showToast({ title: "保存失败，请检查网络", icon: "none" });
+        reject(err);
       });
     });
   },

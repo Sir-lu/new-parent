@@ -46,3 +46,19 @@ Key routing rules:
 - Save progress → invoke /context-save
 - Resume context → invoke /context-restore
 - Author a backlog-ready spec/issue → invoke /spec
+
+## 微信小程序自动部署（硬性规定）
+
+修改 `wxmini/cloudfunctions/**` 后，**测试通过必须自动部署**，不得等用户提醒。
+
+详细流程见 [.claude/rules/wxmini-auto-deploy.md](.claude/rules/wxmini-auto-deploy.md)。
+
+快速命令（在仓库根目录）：
+
+```powershell
+powershell -File wxmini/scripts/test-and-deploy.ps1
+```
+
+```bash
+bash wxmini/scripts/test-and-deploy.sh
+```

@@ -1,7 +1,7 @@
 <view class="container">
 
-  <!-- 未登录 -->
-  <view wx:if="{{!isLoggedIn}}" class="login-card">
+  <!-- 未登录：点击登录 -->
+  <view wx:if="{{!isLoggedIn && !showProfileSetup}}" class="login-card">
     <text class="login-title">登录后同步您的数据</text>
     <text class="login-desc">使用微信登录，宝贝档案和咨询记录将保存到您的账号，换设备也不会丢失。</text>
     <button class="login-btn" bindtap="handleLogin" loading="{{loggingIn}}" disabled="{{loggingIn}}">
@@ -9,11 +9,34 @@
     </button>
   </view>
 
+  <!-- 未登录：首次登录完善资料 -->
+  <view wx:if="{{!isLoggedIn && showProfileSetup}}" class="login-card">
+    <text class="login-title">完善个人资料</text>
+    <text class="login-desc">{{profileSetupDesc}}</text>
+
+    <button class="avatar-picker" open-type="chooseAvatar" bindchooseavatar="onChooseAvatar">
+      <image wx:if="{{avatarUrl}}" class="avatar-preview" src="{{avatarUrl}}" mode="aspectFill" />
+      <view wx:else class="avatar-placeholder">+</view>
+      <text class="avatar-hint">{{avatarUrl ? '点击更换头像' : '点击设置头像'}}</text>
+    </button>
+
+    <view class="form-field">
+      <text class="field-label">昵称</text>
+      <input class="field-input" type="nickname" placeholder="请输入昵称" value="{{nickName}}" bindinput="onNickNameInput" maxlength="20" />
+    </view>
+
+    <button class="login-btn" bindtap="handleCompleteProfile" loading="{{loggingIn}}" disabled="{{loggingIn}}">
+      完成
+    </button>
+    <text class="back-link" bindtap="cancelProfileSetup">返回</text>
+  </view>
+
   <!-- 已登录 -->
-  <view wx:else class="user-card">
-    <view class="user-avatar">🙂</view>
+  <view wx:if="{{isLoggedIn}}" class="user-card">
+    <image wx:if="{{userInfo.avatarUrl}}" class="user-avatar-img" src="{{userInfo.avatarUrl}}" mode="aspectFill" />
+    <view wx:else class="user-avatar">🙂</view>
     <view class="user-info">
-      <text class="user-name">微信用户</text>
+      <text class="user-name">{{userInfo.nickName || '微信用户'}}</text>
       <text class="user-status">已登录 · 数据已同步到云端</text>
     </view>
   </view>

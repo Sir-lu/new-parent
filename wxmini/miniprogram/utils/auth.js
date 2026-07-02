@@ -1,8 +1,15 @@
 // 登录状态工具
 
+function isProfileComplete(userInfo) {
+  if (!userInfo || !userInfo.openid) return false;
+  const nickName = (userInfo.nickName || "").trim();
+  const avatarUrl = (userInfo.avatarUrl || "").trim();
+  return !!(nickName && avatarUrl);
+}
+
 function ensureLogin(options = {}) {
   const app = getApp();
-  if (app.globalData.isLoggedIn && app.globalData.openid) {
+  if (app.globalData.isLoggedIn && isProfileComplete(app.globalData.userInfo)) {
     return Promise.resolve(app.globalData.userInfo);
   }
 
@@ -27,4 +34,4 @@ function ensureLogin(options = {}) {
   return Promise.reject(new Error("未登录"));
 }
 
-module.exports = { ensureLogin };
+module.exports = { ensureLogin, isProfileComplete };

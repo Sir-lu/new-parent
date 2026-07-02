@@ -1,4 +1,50 @@
 <view class="chat-page">
+  <!-- 顶部栏：左上角菜单（豆包风格） -->
+  <view class="top-bar" style="padding-top: {{statusBarHeight}}px;">
+    <view class="top-bar-inner">
+      <view class="top-btn menu-btn" bindtap="openDrawer">
+        <view class="menu-icon">
+          <view class="menu-line"></view>
+          <view class="menu-line"></view>
+          <view class="menu-line short"></view>
+        </view>
+      </view>
+      <text class="top-title">新父母急救箱</text>
+      <view class="top-btn new-btn" bindtap="startNewChat">
+        <text class="new-icon">＋</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 侧滑历史抽屉 -->
+  <view class="drawer-mask {{drawerOpen ? 'show' : ''}}" bindtap="closeDrawer" catchtouchmove="preventMove"></view>
+  <view class="drawer {{drawerOpen ? 'open' : ''}}" style="padding-top: {{statusBarHeight}}px;" catchtouchmove="preventMove">
+    <view class="drawer-header">
+      <text class="drawer-title">历史对话</text>
+      <view class="drawer-close" bindtap="closeDrawer">×</view>
+    </view>
+
+    <scroll-view class="drawer-list" scroll-y>
+      <view wx:if="{{historyLoading}}" class="drawer-empty">加载中…</view>
+      <view wx:elif="{{!isLoggedIn}}" class="drawer-empty">登录后可查看历史对话</view>
+      <view wx:elif="{{historyList.length === 0}}" class="drawer-empty">还没有历史对话</view>
+
+      <view wx:for="{{historyList}}" wx:key="_id"
+            class="history-item"
+            data-id="{{item._id}}"
+            bindtap="openHistoryItem">
+        <text class="history-title">{{item.title}}</text>
+        <text class="history-preview">{{item.preview}}</text>
+        <text class="history-time">{{item.timeText}}</text>
+      </view>
+    </scroll-view>
+
+    <view class="drawer-footer" bindtap="startNewChat">
+      <text class="drawer-new-icon">＋</text>
+      <text>新对话</text>
+    </view>
+  </view>
+
   <!-- 消息滚动区 -->
   <scroll-view class="msg-list" scroll-y scroll-into-view="{{scrollTo}}" scroll-with-animation>
     <!-- 欢迎消息 -->
